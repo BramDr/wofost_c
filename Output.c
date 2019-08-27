@@ -20,7 +20,7 @@ void Output(FILE *fp)
         Crop->st.storage,
         Crop->st.roots,
         Crop->st.LAI,
-        WatBal->WaterStress,
+        WatBal->WaterStressAvg / Crop->GrowthDay,
         WatBal->st.Moisture,
         WatBal->rt.Infiltration,
         Rain[Day],
