@@ -15,7 +15,7 @@ void GetManagement(Management *MNG, char *management)
   FILE *fq;
 
  if ((fq = fopen(management, "rt")) == NULL) {
-     fprintf(stderr, "Cannot open input file.\n"); 
+     fprintf(stderr, "Cannot open input file %s.\n", management); 
      exit(0);
  }
 

@@ -22,7 +22,7 @@ void GetCropData(Plant *CROP, char *cropfile)
 
     if ((fq = fopen(cropfile, "rt")) == NULL)
     {
-        fprintf(stderr, "Cannot open input file.\n"); 
+        fprintf(stderr, "Cannot open input file %s.\n", cropfile); 
         exit(0);
     }
 
