@@ -35,7 +35,7 @@ void GetManagement(Management *MNG, char *management)
   }
 
   if (i != NR_VARIABLES_MANAGEMENT) {
-    fprintf(stderr, "Something wrong with the Site variables.\n"); 
+    fprintf(stderr, "Something wrong with the Management variables in file %s.\n", management);
     exit(0);
   }
  
@@ -79,7 +79,7 @@ void GetManagement(Management *MNG, char *management)
   fclose(fq);
   
   if (i!= NR_TABLES_MANAGEMENT){
-    fprintf(stderr, "Something wrong with the Management tables.\n"); 
+    fprintf(stderr, "Something wrong with the Management tables in file %s.\n", management);
     exit(0);
   }   
  

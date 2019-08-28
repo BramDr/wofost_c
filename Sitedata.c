@@ -37,7 +37,7 @@ void GetSiteData(Field *SITE, char *sitefile)
  }
 
   if (i != NR_VARIABLES_SITE) {
-      fprintf(stderr, "Something wrong with the Site variables.\n");
+      fprintf(stderr, "Something wrong with the Site variables in file %s.\n", sitefile);
       exit(0);
   }
   rewind(fq);  
@@ -72,7 +72,7 @@ void GetSiteData(Field *SITE, char *sitefile)
 
   if (i != NR_TABLES_SITE)
   {
-    fprintf(stderr, "Something wrong with the Site tables.\n"); 
+    fprintf(stderr, "Something wrong with the Site tables in file %s.\n", sitefile);
     exit(0);
   } 
  

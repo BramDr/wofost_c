@@ -55,7 +55,7 @@ void GetCropData(Plant *CROP, char *cropfile)
         ;
     else
     {
-       fprintf(stderr, "Something wrong with the Crop variables.\n"); 
+       fprintf(stderr, "Something wrong with the Crop variables in file %s.\n", cropfile);
        exit(0);
     }
 
@@ -101,7 +101,7 @@ void GetCropData(Plant *CROP, char *cropfile)
         ;
     else
     {
-        fprintf(stderr, "Something wrong with the Crop tables.\n"); 
+        fprintf(stderr, "Something wrong with the Crop tables in file %s.\n", cropfile); 
         exit(0);
     } 
 

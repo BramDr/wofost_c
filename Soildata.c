@@ -33,7 +33,7 @@ void GetSoilData(Soil *SOIL, char *soilfile)
 
  if (i != NR_VARIABLES_SOIL) 
  {
-    fprintf(stderr, "Something wrong with the Soil variables.\n"); 
+    fprintf(stderr, "Something wrong with the Soil variables in file %s.\n", soilfile);
     exit(0);
  }
  
@@ -77,7 +77,7 @@ void GetSoilData(Soil *SOIL, char *soilfile)
 
  if (i!= NR_TABLES_SOIL) 
  {
-    fprintf(stderr, "Something wrong with the Soil tables.\n"); 
+    fprintf(stderr, "Something wrong with the Soil tables in file %s.\n", soilfile);
     exit(0);
  }
  
