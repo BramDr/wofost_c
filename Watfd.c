@@ -21,7 +21,6 @@ void InitializeWatBal()
     
     /* Assume no water stress at initialization */
     WatBal->WaterStress = 1.;
-    WatBal->WaterStressAvg = 0.;
     
     /* Set the infiltration of the previous day to zero */
     WatBal->InfPreviousDay = 0.;

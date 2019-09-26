@@ -17,6 +17,7 @@ void GetMeteoInput(char *meteolist)
     
     Weather *initial = NULL;
     
+    char line[MAX_STRING];
     int StartYear;
     int EndYear;
     float lat;
@@ -31,8 +32,13 @@ void GetMeteoInput(char *meteolist)
         exit(1);
     }
     
-    while (fscanf(ifp,"%s %d %d %f %f" , filename, &StartYear, &EndYear, &lat, &lon) != EOF) 
-    {
+    while(fgets(line, MAX_STRING, ifp)) {
+        if(line[0] == '*' || line[0] == ' ' || line[0] == '\n'){
+            continue;
+        }
+        
+        sscanf(line,"%s %d %d %f %f" , filename, &StartYear, &EndYear, &lat, &lon);
+        
         if (initial == NULL) 
         {
             Meteo = initial = malloc(sizeof(Weather));

@@ -82,7 +82,7 @@ int main(int argc, char **argv)
             current_date.tm_year = MeteoYear[Day] -1900;
             current_date.tm_mday =  0 + MeteoDay[Day];
             mktime(&current_date);
-            
+
             while (Grid)
             {
                 /* Get data, states and rates from the Grid structure and */
@@ -96,10 +96,6 @@ int main(int argc, char **argv)
                 
                 Temp = 0.5 * (Tmax[Day] + Tmin[Day]);
                 DayTemp = 0.5 * (Tmax[Day] + Temp);
-
-                Radiation[Day] = 26370866; // TEMPORARY FOR TESTING
-                Temp = 22; // TEMPORARY FOR TESTING
-                DayTemp = 25; // TEMPORARY FOR TESTING
                 
                 /* Only simulate between start and end year */
                 if ( MeteoYear[Day] >=  Meteo->StartYear && MeteoYear[Day] <= Meteo->EndYear + 1)
@@ -153,11 +149,11 @@ int main(int argc, char **argv)
                             /* Update the number of days that the crop has grown*/
                             Crop->GrowthDay++;
                             
+                            /* Write to the output files */
+                            Output(output[Grid->file]);   
                         }
                         else
                         {
-                            /* Write to the output files */
-                            Output(output[Grid->file]);   
                             //printf("%7d %7d\n", MeteoYear[Day], Crop->GrowthDay);
                             Emergence = 0;
                             Crop->TSumEmergence = 0;

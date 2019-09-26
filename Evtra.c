@@ -92,11 +92,7 @@ void EvapTra() {
         OxygenStress = 1.;
     }
     
-    // TEMPORARY FOR TESTING
-    MoistureStress = OxygenStress = 1.0;
-    
     WatBal->WaterStress = MoistureStress * OxygenStress;
-    WatBal->WaterStressAvg += WatBal->WaterStress;
     //WatBal->WaterStress = 1.;
      
     WatBal->rt.Transpiration = WatBal->WaterStress * Evtra.MaxTranspiration;
