@@ -39,7 +39,7 @@ int GetSimInput(char *list)
         exit(1);
     }
     
-    count = 1;
+    count = 0;
     while(fgets(line, MAX_STRING, ifp)) {
         if(line[0] == '*' || line[0] == ' ' || line[0] == '\n'){
             continue;
@@ -105,5 +105,5 @@ int GetSimInput(char *list)
     Grid = initial;
     
     /* Return the number of meteo files */
-    return --count;
+    return count;
 }   

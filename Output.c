@@ -4,16 +4,16 @@
 
 void header(FILE *fp)
 {
-    fprintf(fp,"Lat\t\tLon\t\tYear\tDay\t\t\tDVS\t\tWLV\t\tWST\t\tWSO\t\tWRT\t\tLAI\t\t\tWSTR\tSOILM\tRain\tINF\t\tRUNOFF\tLOSS\t"
+    fprintf(fp,"Lat\t\t\t\tLon\t\t\tYear\t\tDay\t\tDVS\t\tWLV\t\tWST\t\tWSO\t\tWRT\t\tLAI\t\t\tWSTR\tSOILM\tRain\tINF\t\tRUNOFF\tLOSS\t"
             "\tNNI\t\tPNI\t\tKNI\t\tSOILN\tSOILP\tSOILK\tNUPT\tPUPT\tKUPT\tNDEM\tPDEM\tKDEM\n");
 }
 
 void Output(FILE *fp)
 {
-    fprintf(fp,"%4.2f\t%4.2f\t%4d\t%4d\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t"
+    fprintf(fp,"%7.2f\t%7.2f\t\t%4d\t\t%3d\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t"
             "\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n",
-        Meteo->lat,
-        Meteo->lon,
+        Latitude[Lat],
+        Longitude[Lon],
         MeteoYear[Day],
         MeteoDay[Day],
         Crop->st.Development,
@@ -24,7 +24,7 @@ void Output(FILE *fp)
         Crop->st.LAI,
         WatBal->WaterStress,
         WatBal->st.Moisture,
-        Rain[Day],
+        Rain[Lon][Lat][Day],
         WatBal->rt.Infiltration,
         WatBal->rt.Runoff,
         WatBal->rt.Loss,

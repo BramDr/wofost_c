@@ -4,7 +4,9 @@
 #ifndef EXTERN_H
 #define EXTERN_H
 
-int Day;
+size_t Day;
+size_t Lon;
+size_t Lat;
 float Temp;
 float DayTemp;
 
@@ -29,6 +31,7 @@ extern int Astro();
 extern void CalcPenman();
 extern void CalcPenmanMonteith();
 extern void Clean();
+extern void CleanMeteo();
 
 /* Crop growth */
 extern void Partioning();
