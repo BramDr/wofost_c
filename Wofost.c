@@ -57,6 +57,10 @@ int main(int argc, char **argv)
         strncpy(name, Grid->output,strlen(Grid->output));
            
         output[Grid->file] = fopen(name, "w");
+        if(output[Grid->file] == NULL){
+            fprintf(stderr, "Cannot initialize output file %s.\n", name);
+            exit(0);
+        }
         header(output[Grid->file]);
         Grid = Grid->next;
     }
