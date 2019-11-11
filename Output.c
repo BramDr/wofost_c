@@ -4,7 +4,7 @@
 
 void header(FILE *fp)
 {
-    fprintf(fp,"Lat\t\t\t\tLon\t\t\tYear\t\tDay\t\tDVS\t\tWLV\t\tWST\t\tWSO\t\tWRT\t\tLAI\t\t\tWSTR\tSOILM\tRain\tINF\t\tRUNOFF\tLOSS\t"
+    fprintf(fp,"Lat\t\t\t\tLon\t\t\tYear\t\tDay\t\tDVS\t\tWLV\t\tWST\t\tWSO\t\tWRT\t\tLAI\t\t\tWSTR\tSOILM\tRain\tINF\t\tRUNF\tLOSS\t"
             "\tNNI\t\tPNI\t\tKNI\t\tSOILN\tSOILP\tSOILK\tNUPT\tPUPT\tKUPT\tNDEM\tPDEM\tKDEM\n");
 }
 

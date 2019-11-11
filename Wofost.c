@@ -71,7 +71,10 @@ int main(int argc, char **argv)
     while (Meteo)
     {
         /* Get the meteodata */
-        GetMeteoData(Meteo);
+        if(GetMeteoData(Meteo) != 1) {
+            fprintf(stderr, "Cannot get meteo data.\n");
+            exit(0);
+        }
         printf("running %d - %d\n", Meteo->StartYear, Meteo->EndYear);
         
         for (Lon = 0; Lon < Meteo->nlon; Lon++) {
@@ -158,12 +161,12 @@ int main(int argc, char **argv)
 
                                     /* Update the number of days that the crop has grown*/
                                     Crop->GrowthDay++;
-
-                                    /* Write to the output files */
-                                    Output(output[Grid->file]);
                                 }
                                 else
                                 {
+                                    /* Write to the output files */
+                                    Output(output[Grid->file]);
+                                    
                                     //printf("%7d %7d\n", MeteoYear[Day], Crop->GrowthDay);
                                     Emergence = 0;
                                     Crop->TSumEmergence = 0;
