@@ -408,20 +408,3 @@ void CleanDomain()
     free(AngstB);
     free(Altitude);
 }
-
-void CleanOutput(FILE ****output, int NumberOfFiles)
-{
-    size_t j, k;
-    int l;
-    
-    for (j = 0; j < NLongitude; j++) {
-        for(k = 0; k < NLatitude; k++) {
-            for(l = 0; l < NumberOfFiles; l++) {
-                fclose(output[j][k][l]);
-            }
-            free(output[j][k]);
-        }
-        free(output[j]);
-    }
-    free(output);
-}

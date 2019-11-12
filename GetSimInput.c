@@ -86,7 +86,7 @@ int GetSimInput(char *list)
         if (strlen(start) >= MAX_STRING) exit(0);
         if (strlen(end) >= MAX_STRING) exit(0);
         if (strlen(output) >= MAX_STRING) exit(0); 
-        
+    
         memset(cropfile,'\0',MAX_STRING);
         memset(sitefile,'\0',MAX_STRING);
         memset(soilfile,'\0',MAX_STRING);
@@ -128,7 +128,7 @@ int GetSimInput(char *list)
         tmpGrid->crp->Sowing = 0;
         tmpGrid->crp->Emergence = 0;         // Crop emergence has not yet occurred
         tmpGrid->next = NULL;
-    
+
         /* Loop lat/lon and copy */
         for (j = 0; j < NLongitude; j++) {
             for(k = 0; k < NLatitude; k++) {
@@ -165,7 +165,7 @@ int GetSimInput(char *list)
             Grid[j][k] = initial[j][k];
         }
     }
-    
+
     /* Clear temporary data */
     for (j = 0; j < NLongitude; j++) {
         free(Start[j]);

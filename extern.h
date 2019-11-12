@@ -35,7 +35,6 @@ extern void CalcPenmanMonteith();
 extern void Clean();
 extern void CleanMeteo();
 extern void CleanDomain();
-extern void CleanOutput();
 
 /* Crop growth */
 extern void Partioning();
@@ -79,7 +78,6 @@ extern int GetAfgenTables();
 extern int InitializeMeteo();
 extern int GetMeteoData();
 extern int FillAfgenTables();
-extern void InitializeOutput();
 
 extern void GetDomainData();
 extern void CopySim();

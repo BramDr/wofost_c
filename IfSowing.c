@@ -13,7 +13,7 @@ void IfSowing(int start)
 {
     int month, start_day;
     char dateString[MAX_STRING];
-    
+
     datestring_doy(start, &dateString[0], MAX_STRING);
     sscanf(dateString, "%d-%d", &month, &start_day);
       
