@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <netcdf.h>
 #include "wofost.h"
+
+/* Handle errors by printing an error message and exiting with a
+ * non-zero status. */
+#define ERR(e) {printf("Error: %s\n", nc_strerror(e)); exit(2);}
 
 /* ---------------------------------------------------------------*/
 /*  function Clean()                                              */
@@ -331,7 +336,7 @@ void Clean(SimUnit *Grid)
     while (Grid)
     {
        GridHead = Grid;
-       free( Grid->crp);
+       free(Grid->crp);
        free(Grid->mng);
        free(Grid->soil);
        free(Grid->ste);
@@ -348,39 +353,75 @@ void Clean(SimUnit *Grid)
     Grid = initial = NULL;
 }
 
-void CleanMeteo(Weather * Meteo)
+void CleanMeteo(Weather *Meteo)
 {
+    int i;
     size_t j, k;
-    for (j = 0; j < Meteo->nlon; j++) {
-        for (k = 0; k < Meteo->nlat; k++) {
-            free(Tmin[j][k]);
-            free(Tmax[j][k]);
-            free(Radiation[j][k]);
-            free(Rain[j][k]);
-            free(Windspeed[j][k]);
-            free(Vapour[j][k]);
+    int retval;
+    float ***variable;
+    
+    for (i = 0; i < WEATHER_NTYPES; i++) {
+        if (i == WEATHER_TMIN) {
+            variable = &Tmin;
+        } else if (i == WEATHER_TMAX) {
+            variable = &Tmax;
+        } else if (i == WEATHER_RADIATION) {
+            variable = &Radiation;
+        } else if (i == WEATHER_RAIN) {
+            variable = &Rain;
+        } else if (i == WEATHER_WINDSPEED) {
+            variable = &Windspeed;
+        } else if (i == WEATHER_VAPOUR) {
+            variable = &Vapour;
         }
-        free(Tmin[j]);
-        free(Tmax[j]);
-        free(Radiation[j]);
-        free(Rain[j]);
-        free(Windspeed[j]);
-        free(Vapour[j]);
+
+        for (j = 0; j < NLongitude; j++) {
+            free((*variable)[j]);
+        }
+        free((*variable));
         
+        // close file
+        if ((retval = nc_close(Meteo->ncid[i])))
+           ERR(retval);
+    }
+    
+    for (j = 0; j < NLongitude; j++) {
+        for (k = 0; k < NLatitude; k++) {
+            free(TminPrev[j][k]);
+        }
+        free(TminPrev[j]);
+    }
+    free(TminPrev);
+}
+
+void CleanDomain()
+{
+    size_t j;
+    for (j = 0; j < NLongitude; j++) {
+        free(Mask[j]);
         free(AngstA[j]);
         free(AngstB[j]);
         free(Altitude[j]);
-        free(Mask[j]);
     }
-    free(Tmin);
-    free(Tmax);
-    free(Radiation);
-    free(Rain);
-    free(Windspeed);
-    free(Vapour);
-        
+    free(Mask);
     free(AngstA);
     free(AngstB);
     free(Altitude);
-    free(Mask);
+}
+
+void CleanOutput(FILE ****output, int NumberOfFiles)
+{
+    size_t j, k;
+    int l;
+    
+    for (j = 0; j < NLongitude; j++) {
+        for(k = 0; k < NLatitude; k++) {
+            for(l = 0; l < NumberOfFiles; l++) {
+                fclose(output[j][k][l]);
+            }
+            free(output[j][k]);
+        }
+        free(output[j]);
+    }
+    free(output);
 }

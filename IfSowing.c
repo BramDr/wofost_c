@@ -9,10 +9,12 @@
 /*           is set to 0 the Emergence date has to be established.            */
 /* ---------------------------------------------------------------------------*/
 
-void IfSowing(char* dateString)
+void IfSowing(int start)
 {
     int month, start_day;
-     
+    char dateString[MAX_STRING];
+    
+    datestring_doy(start, &dateString[0], MAX_STRING);
     sscanf(dateString, "%d-%d", &month, &start_day);
       
     if (current_date.tm_mon == (month - 1) &&

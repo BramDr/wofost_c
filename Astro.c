@@ -59,7 +59,7 @@ int Astro()
     
     /*  Extraterrestrial radiation and atmospheric transmission */
     AngotRadiation  = SolarConstant*DSinB;
-    AtmosphTransm   = Radiation[Lon][Lat][Day]/AngotRadiation;
+    AtmosphTransm   = Radiation[Lon][Lat]/AngotRadiation;
 
     if (AtmosphTransm > 0.75)
        FractionDiffuseRad = 0.23;

@@ -9,86 +9,75 @@
 int main(int argc, char **argv)
 {
     
-    FILE **output;
+    FILE ****output = NULL;
     
     SimUnit *initial  = NULL;
     Weather *head;
       
-    int CycleLength   = 300;
+    int CycleLength;
     int NumberOfFiles;
     int Emergence;
     
+    char domain[MAX_STRING];
     char list[MAX_STRING];
     char meteolist[MAX_STRING];
-    char name[MAX_STRING];
     
     Step = 1.;
     
-    if (argc != 3) exit(0);
+    if (argc != 4) exit(0);
     if (strlen(argv[1]) >= MAX_STRING) exit(0);
     if (strlen(argv[2]) >= MAX_STRING) exit(0);
+    if (strlen(argv[3]) >= MAX_STRING) exit(0);
     
+    memset(domain,'\0',MAX_STRING);
     memset(list,'\0',MAX_STRING);
     memset(meteolist,'\0',MAX_STRING);
     
-    strncpy(list,argv[1],strlen(argv[1]));
-    strncpy(meteolist,argv[2],strlen(argv[2]));
+    strncpy(domain,argv[1],strlen(argv[1]));
+    strncpy(list,argv[2],strlen(argv[2]));
+    strncpy(meteolist,argv[3],strlen(argv[3]));
+    
+    /* Fill the domain placeholder */
+    GetDomainData(domain);
     
     /* Fill the crop, soil, site and management place holders*/
     NumberOfFiles = GetSimInput(list);
     
-    /* Set the initial Grid address */
-    initial = Grid;    
-    
     /* Get the meteo filenames and put them in the placeholder */
     GetMeteoInput(meteolist);
     
-    /* Allocate memory for the file pointers */
-    output = malloc(sizeof(**output) * NumberOfFiles);
-    
-    /* Go back to the beginning of the list */
-    Grid = initial;
-    
-    /* Open the output files */
-    while (Grid)
-    {   /* Make valgrind happy  */
-        memset(name,'\0',MAX_STRING);
-        strncpy(name, Grid->output,strlen(Grid->output));
-           
-        output[Grid->file] = fopen(name, "w");
-        if(output[Grid->file] == NULL){
-            fprintf(stderr, "Cannot initialize output file %s.\n", name);
-            exit(0);
-        }
-        header(output[Grid->file]);
-        Grid = Grid->next;
-    }
-    
-    /* Go back to the beginning of the list */
-    Grid = initial;
-    
-    
+    /* Initialize the output */
+    InitializeOutput(&output, NumberOfFiles);
+        
     while (Meteo)
     {
-        /* Get the meteodata */
-        if(GetMeteoData(Meteo) != 1) {
-            fprintf(stderr, "Cannot get meteo data.\n");
+        /* Initialize the meteodata */
+        if(InitializeMeteo(Meteo) != 1) {
+            fprintf(stderr, "Cannot initialize meteo data.\n");
             exit(0);
         }
-        printf("running %d - %d\n", Meteo->StartYear, Meteo->EndYear);
+        printf("Running meteo: %d - %d\n", Meteo->StartYear, Meteo->EndYear);
         
-        for (Lon = 0; Lon < Meteo->nlon; Lon++) {
-            for(Lat = 0; Lat < Meteo->nlat; Lat++) {
-                if(Mask[Lon][Lat] != 1){
-                    continue;
-                }
-                
-                fprintf(stdout, "Location: %lf N - %lf E\n", Latitude[Lat], Longitude[Lon]);
-                
-                for (Day = 0; Day < Meteo->ntime; Day++) //assume that the series start January first
-                {                   
-                    /* Go back to the beginning of the list */
-                    Grid = initial;
+        for (Day = 0; Day < NTime; Day++) //assume that the series start January first
+        {                   
+
+            fprintf(stdout, "Date: %d-%d\n", MeteoDay[Day], MeteoYear[Day]);
+            
+            /* Get the meteodata */
+            if(GetMeteoData(Meteo) != 1) {
+                fprintf(stderr, "Cannot get meteo data.\n");
+                exit(0);
+            }
+            
+            for (Lon = 0; Lon < NLongitude; Lon++) {
+                for(Lat = 0; Lat < NLatitude; Lat++) {
+                    if(Mask[Lon][Lat] != 1){
+                        continue;
+                    }
+
+                    /* Set the meteo data */
+                    cshift(TminPrev[Lon][Lat], 1, 7, 1, -1);
+                    TminPrev[Lon][Lat][0] = Tmin[Lon][Lat];
 
                     /* Set the date struct */
                     memset(&current_date, 0, sizeof(current_date)); 
@@ -96,25 +85,33 @@ int main(int argc, char **argv)
                     current_date.tm_mday =  0 + MeteoDay[Day];
                     mktime(&current_date);
 
-                    while (Grid)
+                    initial = Grid[Lon][Lat];
+                    while (Grid[Lon][Lat])
                     {
                         /* Get data, states and rates from the Grid structure and */
                         /* put them in the place holders */
-                        Crop      = Grid->crp;
-                        WatBal    = Grid->soil;
-                        Mng       = Grid->mng;
-                        Site      = Grid->ste;
-                        //Start     = Grid->start;
-                        Emergence = Grid->emergence; /* Start simulation at sowing or emergence */
-
-                        Temp = 0.5 * (Tmax[Lon][Lat][Day] + Tmin[Lon][Lat][Day]);
-                        DayTemp = 0.5 * (Tmax[Lon][Lat][Day] + Temp);
+                        Crop      = Grid[Lon][Lat]->crp;
+                        WatBal    = Grid[Lon][Lat]->soil;
+                        Mng       = Grid[Lon][Lat]->mng;
+                        Site      = Grid[Lon][Lat]->ste;
+                        Emergence = Grid[Lon][Lat]->emergence; /* Start simulation at sowing or emergence */
+                        
+                        /* Set the meteo data */
+                        Temp = 0.5 * (Tmax[Lon][Lat] + Tmin[Lon][Lat]);
+                        DayTemp = 0.5 * (Tmax[Lon][Lat] + Temp);
+                    
+                        /* Set crop cycle length */
+                        if (Grid[Lon][Lat]->start < Grid[Lon][Lat]->end) {
+                            CycleLength = Grid[Lon][Lat]->end - Grid[Lon][Lat]->start;
+                        } else {
+                            CycleLength = leap_year(MeteoYear[Day]) - Grid[Lon][Lat]->start + Grid[Lon][Lat]->end;
+                        }
 
                         /* Only simulate between start and end year */
                         if ( MeteoYear[Day] >=  Meteo->StartYear && MeteoYear[Day] <= Meteo->EndYear)
                         {   
                             /* Determine if the sowing already has occurred */
-                            IfSowing(Grid->start);
+                            IfSowing(Grid[Lon][Lat]->start);
 
                             /* If sowing has occurred than determine the emergence */
                             if (Crop->Sowing >= 1 && Crop->Emergence == 0)
@@ -165,7 +162,7 @@ int main(int argc, char **argv)
                                 else
                                 {
                                     /* Write to the output files */
-                                    Output(output[Grid->file]);
+                                    Output(output[Lon][Lat][Grid[Lon][Lat]->file]);
                                     
                                     //printf("%7d %7d\n", MeteoYear[Day], Crop->GrowthDay);
                                     Emergence = 0;
@@ -177,12 +174,16 @@ int main(int argc, char **argv)
                         }    
 
                         /* Store the daily calculations in the Grid structure */
-                        Grid->crp  = Crop;
-                        Grid->soil = WatBal;
-                        Grid->mng  = Mng;
-                        Grid->ste  = Site;
-                        Grid = Grid->next;
+                        Grid[Lon][Lat]->crp  = Crop;
+                        Grid[Lon][Lat]->soil = WatBal;
+                        Grid[Lon][Lat]->mng  = Mng;
+                        Grid[Lon][Lat]->ste  = Site;
+                        Grid[Lon][Lat] = Grid[Lon][Lat]->next;
                     }
+            
+                    /* Return to the beginning of the list */
+                    Grid[Lon][Lat] = initial;
+                    initial = NULL;
                 }
             }
         }
@@ -193,20 +194,17 @@ int main(int argc, char **argv)
         free(head);
     }
     
-    /* Return to the beginning of the list */
-    Grid = initial;
-    
     /* Close the output files and free the allocated memory */
-    while(Grid)
-    {
-        fclose(output[Grid->file]);
-        Grid = Grid->next;
-    }
-    free(output);
+    CleanOutput(output, NumberOfFiles);
 
-    /* Go back to the beginning of the list */
-    Grid = initial;
-    Clean(Grid);
+    /* Clean grids */
+    for (Lon = 0; Lon < NLongitude; Lon++) {
+        for(Lat = 0; Lat < NLatitude; Lat++) {
+            Clean(Grid[Lon][Lat]);
+        }
+    }
+    
+    CleanDomain();
 
     return 1;
 }

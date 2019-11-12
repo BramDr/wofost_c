@@ -406,11 +406,12 @@ typedef struct SIMUNIT {
         Soil  *soil;
         int emergence;
         int file;
-        char start[MAX_STRING];
+        int start;
+        int end;
         char output[MAX_STRING];
         struct SIMUNIT *next;
         } SimUnit; 
-SimUnit *Grid;
+SimUnit ***Grid;
 
 enum{
     WEATHER_TMIN,
@@ -423,15 +424,14 @@ enum{
 };
 
 typedef struct WEATHER {
-        char mask[MAX_STRING];
         char file[WEATHER_NTYPES][MAX_STRING];
+        int ncid[WEATHER_NTYPES];
+        int varid[WEATHER_NTYPES];
         char type[WEATHER_NTYPES][MAX_STRING];
         char var[WEATHER_NTYPES][MAX_STRING];
+        char units[WEATHER_NTYPES][MAX_STRING];
         int StartYear;
         int EndYear;
-        size_t nlat;
-        size_t nlon;
-        size_t ntime;
         struct WEATHER *next;
         } Weather;
 Weather *Meteo; /* Place holder for the meteo filenames and lat/lon */
@@ -441,17 +441,19 @@ int Station, Year;
 int MeteoYear[METEO_LENGTH];
 int MeteoDay[METEO_LENGTH];
 float CO2;
+size_t NLongitude, NLatitude, NTime;
 double Longitude[DOMAIN_LENGTH], Latitude[DOMAIN_LENGTH];
 int **Mask;
 float **Altitude;
 float **AngstA;
 float **AngstB;
-float ***Tmin;
-float ***Tmax;
-float ***Radiation;
-float ***Rain;
-float ***Windspeed;
-float ***Vapour;
+float **Tmin;
+float **Tmax;
+float **Radiation;
+float **Rain;
+float **Windspeed;
+float **Vapour;
+float ***TminPrev;
 
 
 /* Time step */

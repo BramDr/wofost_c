@@ -15,8 +15,9 @@ int GetSimInput(char *list)
 {
     FILE *ifp;
      
-    SimUnit *initial = NULL;
-       
+    SimUnit *tmpGrid;
+     
+    size_t j, k;
     int Emergence;
     int count;
   
@@ -26,17 +27,46 @@ int GetSimInput(char *list)
     char soilfile[MAX_STRING];
     char sitefile[MAX_STRING];
     char management[MAX_STRING];
+    char startfile[MAX_STRING];
+    char endfile[MAX_STRING];
     char output[MAX_STRING];
-    char start[MAX_STRING];
-    char cf[MAX_STRING], sf[MAX_STRING], mf[MAX_STRING], site[MAX_STRING];
+    char cf[MAX_STRING], sf[MAX_STRING], mf[MAX_STRING], site[MAX_STRING], start[MAX_STRING], end[MAX_STRING];
   
+    SimUnit ***initial;
+    int **Start;
+    int **End;
+    
+    // Allocate temporary data
+    Start = malloc(NLongitude * sizeof(*Start));
+    End = malloc(NLongitude * sizeof(*End));
+    initial = malloc(NLongitude * sizeof(*initial));
+    if(Start == NULL || End == NULL || initial == NULL){
+        fprintf(stderr, "Could not malloc");
+        exit(0); 
+    }
+    for (j = 0; j < NLongitude; j++) {
+        Start[j] = malloc(NLatitude * sizeof(*Start[j]));
+        End[j] = malloc(NLatitude * sizeof(*End[j]));
+        initial[j] = malloc(NLatitude * sizeof(*initial[j]));
+        if(Start[j] == NULL || End[j] == NULL || initial[j] == NULL){
+            fprintf(stderr, "Could not malloc");
+            exit(0); 
+        }
+    }
+    
+    /* NULL initial */
+    for (j = 0; j < NLongitude; j++) {
+        for(k = 0; k < NLatitude; k++) {
+            initial[j][k] = NULL;
+        }
+    }
     
     ifp = fopen(list, "r");
 
     if (ifp == NULL) 
     {
         fprintf(stderr, "Can't open input, %s\n", list);
-        exit(1);
+        exit(0);
     }
     
     count = 0;
@@ -45,13 +75,24 @@ int GetSimInput(char *list)
             continue;
         }
         
-        sscanf(line,"%s %s %s %s %s %s %d %s" ,
-            path, cf, sf, mf, site, start, &Emergence, output);
+        sscanf(line,"%s %s %s %s %s %s %s %d %s" ,
+            path, cf, sf, mf, site, start, end, &Emergence, output);
+
+        if (strlen(path) >= MAX_STRING) exit(0);
+        if (strlen(cf) >= MAX_STRING) exit(0);
+        if (strlen(sf) >= MAX_STRING) exit(0);
+        if (strlen(mf) >= MAX_STRING) exit(0);
+        if (strlen(site) >= MAX_STRING) exit(0);
+        if (strlen(start) >= MAX_STRING) exit(0);
+        if (strlen(end) >= MAX_STRING) exit(0);
+        if (strlen(output) >= MAX_STRING) exit(0); 
         
         memset(cropfile,'\0',MAX_STRING);
         memset(sitefile,'\0',MAX_STRING);
         memset(soilfile,'\0',MAX_STRING);
         memset(management,'\0',MAX_STRING);
+        memset(startfile,'\0',MAX_STRING);
+        memset(endfile,'\0',MAX_STRING);
                 
         strncpy(cropfile, path, strlen(path));
         strncat(cropfile, cf, strlen(cf));
@@ -64,45 +105,76 @@ int GetSimInput(char *list)
 
         strncpy(sitefile, path, strlen(path));
         strncat(sitefile, site, strlen(site));
-        
-        /* count the number of output files */
-        /* number is the index number of the list of file pointers */
-        if (initial == NULL) 
-        {
-            Grid = initial =  malloc(sizeof(SimUnit));
-        }
-        else 
-        {
-            Grid->next = malloc(sizeof(SimUnit));
-            Grid = Grid->next;  
-        }
-        
-        GetCropData(Grid->crp   = malloc(sizeof(Plant)), cropfile); 
-        GetSiteData(Grid->ste   = malloc(sizeof(Field)), sitefile);
-        GetManagement(Grid->mng = malloc(sizeof(Management)), management);
-        GetSoilData(Grid->soil  = malloc(sizeof(Soil)), soilfile);
 
-        if (strlen(sf) >= MAX_STRING) exit(0);
-        if (strlen(output) >= MAX_STRING) exit(0);    
-        if (strlen(start) >= MAX_STRING) exit(0);  
+        strncpy(startfile, path, strlen(path));
+        strncat(startfile, start, strlen(start));
+
+        strncpy(endfile, path, strlen(path));
+        strncat(endfile, end, strlen(end));
         
-        memset(Grid->output,'\0',MAX_STRING);
-        memset(Grid->start,'\0',MAX_STRING);
+        tmpGrid = malloc(sizeof(SimUnit));
+        GetCropData(tmpGrid->crp   = malloc(sizeof(Plant)), cropfile); 
+        GetSiteData(tmpGrid->ste   = malloc(sizeof(Field)), sitefile);
+        GetManagement(tmpGrid->mng = malloc(sizeof(Management)), management);
+        GetSoilData(tmpGrid->soil  = malloc(sizeof(Soil)), soilfile);
+        GetStartData(&Start, startfile);
+        GetEndData(&End, endfile);
         
-        strncpy(Grid->output,output,strlen(output)); // Name og output file
-        strncpy(Grid->start,start,strlen(start)); // Starting string month day of the simulations 
+        memset(tmpGrid->output,'\0',MAX_STRING);
+        strncpy(tmpGrid->output,output,strlen(output)); // Name og output file
         
-        Grid->file  = count++;            // number of elements in Grid carousel
-        Grid->emergence = Emergence;      // Start the simulations at emergence (1) or at sowing (0)                
-        Grid->crp->Sowing = 0;
-        Grid->crp->Emergence = 0;         // Crop emergence has not yet occurred
-        Grid->next = NULL;
+        tmpGrid->file  = count++;            // number of elements in Grid carousel
+        tmpGrid->emergence = Emergence;      // Start the simulations at emergence (1) or at sowing (0)                
+        tmpGrid->crp->Sowing = 0;
+        tmpGrid->crp->Emergence = 0;         // Crop emergence has not yet occurred
+        tmpGrid->next = NULL;
+    
+        /* Loop lat/lon and copy */
+        for (j = 0; j < NLongitude; j++) {
+            for(k = 0; k < NLatitude; k++) {
+
+                if (initial[j][k] == NULL) 
+                {
+                    Grid[j][k] = initial[j][k] = malloc(sizeof(SimUnit));
+                }
+                else 
+                {
+                    Grid[j][k]->next = malloc(sizeof(SimUnit));
+                    Grid[j][k] = Grid[j][k]->next;  
+                }
+
+                Grid[j][k]->crp = malloc(sizeof(Plant));
+                Grid[j][k]->ste = malloc(sizeof(Field));
+                Grid[j][k]->mng = malloc(sizeof(Management));
+                Grid[j][k]->soil = malloc(sizeof(Soil));
+                Grid[j][k]->next = NULL;
+
+                tmpGrid->start = Start[j][k];
+                tmpGrid->end = End[j][k];
+                CopySim(tmpGrid, Grid[j][k]);
+            }
+        }
+        Clean(tmpGrid);
     }
     
     fclose(ifp);
     
-    /* Set Grid back to initial address */
-    Grid = initial;
+    /* Return to start of list */
+    for (j = 0; j < NLongitude; j++) {
+        for(k = 0; k < NLatitude; k++) {
+            Grid[j][k] = initial[j][k];
+        }
+    }
+    
+    /* Clear temporary data */
+    for (j = 0; j < NLongitude; j++) {
+        free(Start[j]);
+        free(End[j]);
+        free(initial[j]);
+    }
+    free(Start);
+    free(End);
+    free(initial);
     
     /* Return the number of meteo files */
     return count;

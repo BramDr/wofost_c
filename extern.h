@@ -11,6 +11,7 @@ float Temp;
 float DayTemp;
 
 /* General help functions */
+extern void cshift(float *data, int nx, int ny, int axis, int direction);
 extern float max(float a, float b);
 extern float min(float a, float b);
 extern float Afgen();
@@ -19,6 +20,7 @@ extern float limit(float a, float b, float c);
 extern float notnul(float x);
 extern float insw(float x1, float x2, float x3);
 extern int leap_year(int year);
+extern void datestring_doy(int doy, char *dateString, size_t length);
 extern void RatesToZero();
 extern void Output();
 extern void header();
@@ -32,6 +34,8 @@ extern void CalcPenman();
 extern void CalcPenmanMonteith();
 extern void Clean();
 extern void CleanMeteo();
+extern void CleanDomain();
+extern void CleanOutput();
 
 /* Crop growth */
 extern void Partioning();
@@ -72,17 +76,23 @@ extern void RateCalcultionNutrients();
 
 /* Read data */
 extern int GetAfgenTables();
+extern int InitializeMeteo();
 extern int GetMeteoData();
 extern int FillAfgenTables();
+extern void InitializeOutput();
 
+extern void GetDomainData();
+extern void CopySim();
 extern void GetCropData();
 extern void FillCropVariables();
 extern void GetSiteData();
 extern void FillSiteVariables();
-extern void  GetSoilData();
+extern void GetSoilData();
 extern void FillSoilVariables();
 extern void GetManagement();
 extern void FillManageVariables();
+extern void GetStartData();
+extern void GetEndData();
 
 /* Water balance */
 extern void InitializeWatBal();

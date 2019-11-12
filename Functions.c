@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include "wofost.h"
 #include "extern.h"
 
@@ -29,6 +31,26 @@ int leap_year(int year)
         return 365;
 }
 
+void datestring_doy(int doy, char *dateString, size_t length)
+{
+    const int monthdays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    
+    int i;
+    int month, day;
+    
+    memset(dateString,'\0', length);
+    for(i = 0; i < 12; i++) {
+        if (doy < monthdays[i]) {
+            month = i + 1;
+            day = doy;
+            snprintf(dateString, length, "%d-%d", month, day);
+            return;
+        }
+        doy -= monthdays[i];
+    }
+    
+    snprintf(dateString, length, "%d-%d", i, monthdays[i - 1]);
+}
 
 float min(float a, float b)
 {

@@ -24,7 +24,7 @@ void Output(FILE *fp)
         Crop->st.LAI,
         WatBal->WaterStress,
         WatBal->st.Moisture,
-        Rain[Lon][Lat][Day],
+        Rain[Lon][Lat],
         WatBal->rt.Infiltration,
         WatBal->rt.Runoff,
         WatBal->rt.Loss,

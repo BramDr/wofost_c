@@ -99,7 +99,7 @@ float DailyTotalAssimilation()
         {
             Hour       = 12.0+0.5*Daylength*XGauss[i];
             SinB       = max (0.,SinLD+CosLD*cos(2.*PI*(Hour+12.)/24.));
-            PAR        = 0.5*Radiation[Lon][Lat][Day]*SinB*(1.+0.4*SinB)/DSinBE;
+            PAR        = 0.5*Radiation[Lon][Lat]*SinB*(1.+0.4*SinB)/DSinBE;
             PARDiffuse = min (PAR,SinB*DiffRadPP);
             PARDirect  = PAR-PARDiffuse;
             DailyTotalAssimilation = DailyTotalAssimilation + 
@@ -116,7 +116,6 @@ float DailyTotalAssimilation()
 /*-----------------------------------------------------------------------------*/
 float Correct(float Assimilation)
 {
-    int PreviousDay;
     int Counter;
     int number = 7;
     float TminLowAvg = 0.;
@@ -126,12 +125,15 @@ float Correct(float Assimilation)
     {
         number = Crop->GrowthDay;
     }
+    if (Day < 6) 
+    {
+        number = Day;
+    }
     
     Counter = 0;
-    PreviousDay = Day;
-    while (PreviousDay >= 0 && Counter < number)
+    while (Counter < number)
     {
-      TminLowAvg += Tmin[Lon][Lat][PreviousDay--]; 
+      TminLowAvg += TminPrev[Lon][Lat][Counter]; 
       Counter++;
     }
 

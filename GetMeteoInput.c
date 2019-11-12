@@ -23,17 +23,17 @@ void GetMeteoInput(char *meteolist)
     int StartYear;
     int EndYear;
     char path[MAX_STRING];
-    char mask[MAX_STRING];
     char filename[MAX_STRING];
     char filetype[MAX_STRING];
     char varname[MAX_STRING];
+    char varunits[MAX_STRING];
     
     ifp = fopen(meteolist, "r");
 
     if (ifp == NULL) 
     {
         fprintf(stderr, "Can't open %s\n", meteolist);
-        exit(1);
+        exit(0);
     }
     
     while(fgets(line, MAX_STRING, ifp)) {
@@ -41,7 +41,7 @@ void GetMeteoInput(char *meteolist)
             continue;
         }
         
-        sscanf(line,"%s %d %d %s" , path, &StartYear, &EndYear, mask);
+        sscanf(line,"%s %d %d" , path, &StartYear, &EndYear);
         
         if (initial == NULL) 
         {
@@ -53,8 +53,6 @@ void GetMeteoInput(char *meteolist)
             Meteo = Meteo->next;  
         }  
 
-        memset(Meteo->mask,'\0',MAX_STRING);
-        strncpy(Meteo->mask, mask, strlen(mask));
         Meteo->StartYear = StartYear;
         Meteo->EndYear = EndYear;
         Meteo->next = NULL;
@@ -62,16 +60,19 @@ void GetMeteoInput(char *meteolist)
         for (i = 0; i < WEATHER_NTYPES; i++) {
             if(fgets(line, MAX_STRING, ifp) == NULL){
                 fprintf(stderr, "Missing meteo types\n");
-                exit(1);
+                exit(0);
             }
             
             if(line[0] == '*' || line[0] == ' ' || line[0] == '\n'){
                 continue;
             }
         
-            sscanf(line,"%s %s %s" , filename, filetype, varname);
+            sscanf(line,"%s %s %s %s" , filename, filetype, varname, varunits);
                     
             if (strlen(filename) >= MAX_STRING) exit(0);
+            if (strlen(filetype) >= MAX_STRING) exit(0);
+            if (strlen(varname) >= MAX_STRING) exit(0);
+            if (strlen(varunits) >= MAX_STRING) exit(0);
 
             if (strcmp(filetype,"TMIN") == 0) {
                 type = WEATHER_TMIN;
@@ -87,16 +88,18 @@ void GetMeteoInput(char *meteolist)
                 type = WEATHER_VAPOUR;
             } else {
                 fprintf(stderr, "Unknown meteo type %s\n", filetype);
-                exit(1);
+                exit(0);
             }
-            memset(Meteo->type[type],'\0',MAX_STRING);
-            strncpy(Meteo->type[type], filetype, strlen(filetype));
-
+            
             memset(Meteo->file[type],'\0',MAX_STRING);
             strncpy(Meteo->file[type], path, strlen(path));
             strncat(Meteo->file[type], filename, strlen(filename));
+            memset(Meteo->type[type],'\0',MAX_STRING);
+            strncpy(Meteo->type[type], filetype, strlen(filetype));
             memset(Meteo->var[type],'\0',MAX_STRING);
-            strncpy(Meteo->var[type], varname, strlen(filename));
+            strncpy(Meteo->var[type], varname, strlen(varname));
+            memset(Meteo->units[type],'\0',MAX_STRING);
+            strncpy(Meteo->units[type], varunits, strlen(varunits));
         }
     }
           
