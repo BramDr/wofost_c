@@ -132,26 +132,28 @@ int GetSimInput(char *list)
         /* Loop lat/lon and copy */
         for (j = 0; j < NLongitude; j++) {
             for(k = 0; k < NLatitude; k++) {
+                if (Mask[j][k] == 1) {
+                
+                    if (initial[j][k] == NULL) 
+                    {
+                        Grid[j][k] = initial[j][k] = malloc(sizeof(SimUnit));
+                    }
+                    else 
+                    {
+                        Grid[j][k]->next = malloc(sizeof(SimUnit));
+                        Grid[j][k] = Grid[j][k]->next;  
+                    }
 
-                if (initial[j][k] == NULL) 
-                {
-                    Grid[j][k] = initial[j][k] = malloc(sizeof(SimUnit));
+                    Grid[j][k]->crp = malloc(sizeof(Plant));
+                    Grid[j][k]->ste = malloc(sizeof(Field));
+                    Grid[j][k]->mng = malloc(sizeof(Management));
+                    Grid[j][k]->soil = malloc(sizeof(Soil));
+                    Grid[j][k]->next = NULL;
+
+                    tmpGrid->start = Start[j][k];
+                    tmpGrid->end = End[j][k];
+                    CopySim(tmpGrid, Grid[j][k]);
                 }
-                else 
-                {
-                    Grid[j][k]->next = malloc(sizeof(SimUnit));
-                    Grid[j][k] = Grid[j][k]->next;  
-                }
-
-                Grid[j][k]->crp = malloc(sizeof(Plant));
-                Grid[j][k]->ste = malloc(sizeof(Field));
-                Grid[j][k]->mng = malloc(sizeof(Management));
-                Grid[j][k]->soil = malloc(sizeof(Soil));
-                Grid[j][k]->next = NULL;
-
-                tmpGrid->start = Start[j][k];
-                tmpGrid->end = End[j][k];
-                CopySim(tmpGrid, Grid[j][k]);
             }
         }
         Clean(tmpGrid);
