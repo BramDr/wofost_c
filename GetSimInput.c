@@ -75,6 +75,8 @@ int GetSimInput(char *list)
             continue;
         }
         
+        fprintf(stdout, "Loading crop %d\n", count);
+        
         sscanf(line,"%s %s %s %s %s %s %s %d %s" ,
             path, cf, sf, mf, site, start, end, &Emergence, output);
 
