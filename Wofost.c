@@ -204,7 +204,6 @@ int main(int argc, char **argv)
             
                     /* Return to the beginning of the list */
                     Grid[Lon][Lat] = initial;
-                    initial = NULL;
                 }
             }
         }
