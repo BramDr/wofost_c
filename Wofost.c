@@ -12,6 +12,7 @@ int main(int argc, char **argv)
     FILE **output = NULL;
     
     SimUnit *initial  = NULL;
+    SimUnit *sampleGrid = NULL;
     Weather *head;
       
     int CycleLength;
@@ -42,10 +43,10 @@ int main(int argc, char **argv)
     GetDomainData(domain);
     
     /* Fill the crop, soil, site and management place holders*/
-    NumberOfFiles = GetSimInput(list);
+    NumberOfFiles = GetSimInput(list, &sampleGrid);
     
     /* Set the initial Grid address */
-    initial = Grid[0][0];    
+    initial = sampleGrid;    
     
     /* Get the meteo filenames and put them in the placeholder */
     GetMeteoInput(meteolist);
@@ -54,27 +55,27 @@ int main(int argc, char **argv)
     output = malloc(sizeof(*output) * NumberOfFiles);
     
     /* Go back to the beginning of the list */
-    Grid[0][0] = initial;
+    sampleGrid = initial;
     
     /* Open the output files */
-    while (Grid[0][0])
+    while (sampleGrid)
     {
         /* Make valgrind happy  */
         memset(name,'\0',MAX_STRING);
-        strncpy(name, Grid[0][0]->output, strlen(Grid[0][0]->output));
+        strncpy(name, sampleGrid->output, strlen(sampleGrid->output));
 
-        output[Grid[0][0]->file] = fopen(name, "w");
-        if(output[Grid[0][0]->file] == NULL){
+        output[sampleGrid->file] = fopen(name, "w");
+        if(output[sampleGrid->file] == NULL){
             fprintf(stderr, "Cannot initialize output file %s.\n", name);
             exit(0);
         }
 
-        header(output[Grid[0][0]->file]);
-        Grid[0][0] = Grid[0][0]->next;
+        header(output[sampleGrid->file]);
+        sampleGrid = sampleGrid->next;
     }
     
     /* Go back to the beginning of the list */
-    Grid[0][0] = initial;
+    sampleGrid = initial;
         
 
     while (Meteo)
@@ -181,11 +182,12 @@ int main(int argc, char **argv)
 
                                 /* Update the number of days that the crop has grown*/
                                 Crop->GrowthDay++;
+                                
+                                /* Write to the output files */
+                                Output(output[Grid[Lon][Lat]->file]);
                             }
                             else
                             {
-                                /* Write to the output files */
-                                Output(output[Grid[Lon][Lat]->file]);
                                 //printf("%7d %7d\n", MeteoYear[Day], Crop->GrowthDay);
                                 Emergence = 0;
                                 Crop->TSumEmergence = 0;
@@ -215,18 +217,18 @@ int main(int argc, char **argv)
     }
     
     /* Return to the beginning of the list */
-    Grid[0][0] = initial;
+    sampleGrid = initial;
     
     /* Close the output files and free the allocated memory */
-    while(Grid[0][0])
+    while(sampleGrid)
     {
-        fclose(output[Grid[0][0]->file]);
-        Grid[0][0] = Grid[0][0]->next;
+        fclose(output[sampleGrid->file]);
+        sampleGrid = sampleGrid->next;
     }
     free(output);
 
     /* Go back to the beginning of the list */
-    Grid[0][0] = initial;
+    sampleGrid = initial;
     for (Lon = 0; Lon < NLongitude; Lon++) {
         for(Lat = 0; Lat < NLatitude; Lat++) {
             Clean(Grid[Lon][Lat]);

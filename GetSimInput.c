@@ -11,7 +11,7 @@
 /*           starts at emergence (1) or sowing (0)                             */
 /*-----------------------------------------------------------------------------*/
 
-int GetSimInput(char *list)
+int GetSimInput(char *list, SimUnit **sampleGrid)
 {
     FILE *ifp;
      
@@ -144,6 +144,10 @@ int GetSimInput(char *list)
                     {
                         Grid[j][k]->next = malloc(sizeof(SimUnit));
                         Grid[j][k] = Grid[j][k]->next;  
+                    }
+                    
+                    if ((*sampleGrid) == NULL) {
+                        (*sampleGrid) = initial[j][k];
                     }
 
                     Grid[j][k]->crp = malloc(sizeof(Plant));
