@@ -51,99 +51,99 @@ void headerNCDF(int ncid)
     // Add output variables
     if ((retval = nc_def_var(ncid, "DVS", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "WLV", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "WST", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "WSO", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "WRT", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "LAI", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "WSTR", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "SOILM", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "Rain", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "INF", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "RUNF", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "LOSS", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "NNI", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "PNI", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "KNI", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "SOILN", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "SOILP", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "SOILK", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "NUPT", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "PUPT", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "KUPT", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "NDEM", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "PDEM", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     if ((retval = nc_def_var(ncid, "KDEM", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
-    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 5)))
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
     
     // Add output units
