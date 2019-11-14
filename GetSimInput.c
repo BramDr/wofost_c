@@ -30,6 +30,7 @@ int GetSimInput(char *list, SimUnit **sampleGrid)
     char startfile[MAX_STRING];
     char endfile[MAX_STRING];
     char output[MAX_STRING];
+    char type[MAX_STRING];
     char cf[MAX_STRING], sf[MAX_STRING], mf[MAX_STRING], site[MAX_STRING], start[MAX_STRING], end[MAX_STRING];
   
     SimUnit ***initial;
@@ -77,8 +78,8 @@ int GetSimInput(char *list, SimUnit **sampleGrid)
         
         fprintf(stdout, "Loading crop %d\n", count);
         
-        sscanf(line,"%s %s %s %s %s %s %s %d %s" ,
-            path, cf, sf, mf, site, start, end, &Emergence, output);
+        sscanf(line,"%s %s %s %s %s %s %s %d %s %s" ,
+            path, cf, sf, mf, site, start, end, &Emergence, output, type);
 
         if (strlen(path) >= MAX_STRING) exit(0);
         if (strlen(cf) >= MAX_STRING) exit(0);
@@ -88,6 +89,7 @@ int GetSimInput(char *list, SimUnit **sampleGrid)
         if (strlen(start) >= MAX_STRING) exit(0);
         if (strlen(end) >= MAX_STRING) exit(0);
         if (strlen(output) >= MAX_STRING) exit(0); 
+        if (strlen(type) >= MAX_STRING) exit(0); 
     
         memset(cropfile,'\0',MAX_STRING);
         memset(sitefile,'\0',MAX_STRING);
@@ -124,6 +126,15 @@ int GetSimInput(char *list, SimUnit **sampleGrid)
         
         memset(tmpGrid->output,'\0',MAX_STRING);
         strncpy(tmpGrid->output,output,strlen(output)); // Name og output file
+        
+        if (strcmp(type,"TXT") == 0) {
+            tmpGrid->outputType = OUTPUT_TXT;
+        } else if (strcmp(type, "NCDF") == 0) {
+            tmpGrid->outputType = OUTPUT_NCDF;
+        } else {
+            fprintf(stderr, "Unknown output type %s\n", type);
+            exit(0);
+        }
         
         tmpGrid->file  = count++;            // number of elements in Grid carousel
         tmpGrid->emergence = Emergence;      // Start the simulations at emergence (1) or at sowing (0)                

@@ -2,14 +2,20 @@
 #include <string.h>
 #include <stdlib.h>
 #include <float.h>
+#include <netcdf.h>
 #include "wofost.h"
 #include "extern.h"
 
+/* Handle errors by printing an error message and exiting with a
+ * non-zero status. */
+#define ERR(e) {printf("Error: %s\n", nc_strerror(e)); exit(2);}
 
 int main(int argc, char **argv)
 {
     
-    FILE **output = NULL;
+    FILE **outputTXT = NULL;
+    int *outputNCDF = NULL;
+    int retval;
     
     SimUnit *initial  = NULL;
     SimUnit *sampleGrid = NULL;
@@ -52,7 +58,8 @@ int main(int argc, char **argv)
     GetMeteoInput(meteolist);
     
     /* Allocate memory for the file pointers */
-    output = malloc(sizeof(*output) * NumberOfFiles);
+    outputTXT = malloc(sizeof(*outputTXT) * NumberOfFiles);
+    outputNCDF = malloc(sizeof(*outputNCDF) * NumberOfFiles);
     
     /* Go back to the beginning of the list */
     sampleGrid = initial;
@@ -64,16 +71,24 @@ int main(int argc, char **argv)
         memset(name,'\0',MAX_STRING);
         strncpy(name, sampleGrid->output, strlen(sampleGrid->output));
 
-        output[sampleGrid->file] = fopen(name, "w");
-        if(output[sampleGrid->file] == NULL){
-            fprintf(stderr, "Cannot initialize output file %s.\n", name);
-            exit(0);
+        if (sampleGrid->outputType == OUTPUT_TXT) {
+            if((outputTXT[sampleGrid->file] = fopen(name, "w")) == NULL) {
+                fprintf(stderr, "Cannot initialize output file %s.\n", name);
+                exit(0);
+            }
+            headerTXT(outputTXT[sampleGrid->file]);
+        } else if (sampleGrid->outputType == OUTPUT_NCDF) {
+            if((retval = nc_create(name, NC_NETCDF4, &outputNCDF[sampleGrid->file])))
+                ERR(retval);
+            headerNCDF(outputNCDF[sampleGrid->file]);
+            if((retval = nc_close(outputNCDF[sampleGrid->file])))
+                ERR(retval);
+            if((retval = nc_open(name, NC_WRITE, &outputNCDF[sampleGrid->file])))
+                ERR(retval);
         }
-
-        header(output[sampleGrid->file]);
+        
         sampleGrid = sampleGrid->next;
     }
-    
     /* Go back to the beginning of the list */
     sampleGrid = initial;
         
@@ -184,7 +199,9 @@ int main(int argc, char **argv)
                                 Crop->GrowthDay++;
                                 
                                 /* Write to the output files */
-                                Output(output[Grid[Lon][Lat]->file]);
+                                if (Grid[Lon][Lat]->outputType == OUTPUT_TXT) {
+                                    OutputTXT(outputTXT[Grid[Lon][Lat]->file]);
+                                }
                             }
                             else
                             {
@@ -208,6 +225,9 @@ int main(int argc, char **argv)
                     Grid[Lon][Lat] = initial;
                 }
             }
+            
+            /* Write to the output files */
+            OutputNCDF(outputNCDF, sampleGrid);
         }
         
         head = Meteo;
@@ -222,10 +242,16 @@ int main(int argc, char **argv)
     /* Close the output files and free the allocated memory */
     while(sampleGrid)
     {
-        fclose(output[sampleGrid->file]);
+        if (sampleGrid->outputType == OUTPUT_TXT) {
+            fclose(outputTXT[sampleGrid->file]);
+        } else if (sampleGrid->outputType == OUTPUT_NCDF) {
+            if((retval = nc_close(outputNCDF[sampleGrid->file])))
+                ERR(retval);
+        }
         sampleGrid = sampleGrid->next;
     }
-    free(output);
+    free(outputTXT);
+    free(outputNCDF);
 
     /* Go back to the beginning of the list */
     sampleGrid = initial;

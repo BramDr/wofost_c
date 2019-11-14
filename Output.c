@@ -2,13 +2,13 @@
 #include "extern.h"
 #include "wofost.h"
 
-void header(FILE *fp)
+void headerTXT(FILE *fp)
 {
     fprintf(fp,"Lat\t\t\t\tLon\t\t\tYear\t\tDay\t\tDVS\t\tWLV\t\tWST\t\tWSO\t\tWRT\t\tLAI\t\t\tWSTR\tSOILM\tRain\tINF\t\tRUNF\tLOSS\t"
             "\tNNI\t\tPNI\t\tKNI\t\tSOILN\tSOILP\tSOILK\tNUPT\tPUPT\tKUPT\tNDEM\tPDEM\tKDEM\n");
 }
 
-void Output(FILE *fp)
+void OutputTXT(FILE *fp)
 {
     fprintf(fp,"%7.2f\t%7.2f\t\t%4d\t\t%3d\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t"
             "\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n",

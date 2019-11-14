@@ -57,6 +57,17 @@ void GetMeteoInput(char *meteolist)
         Meteo->EndYear = EndYear;
         Meteo->next = NULL;
         
+        if (Meteo->EndYear < Meteo->StartYear) {
+            fprintf(stderr, "Meteo start year [%d] is bigger than end year [%d]?\n",
+                            Meteo->StartYear, Meteo->EndYear);
+            exit(0);
+        }
+        
+        NTime = 0;
+        for (i = Meteo->StartYear; i <= Meteo->EndYear; i++) {
+            NTime += leap_year(i);
+        }
+        
         for (i = 0; i < WEATHER_NTYPES; i++) {
             if(fgets(line, MAX_STRING, ifp) == NULL){
                 fprintf(stderr, "Missing meteo types\n");

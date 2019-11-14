@@ -398,6 +398,12 @@ typedef struct FIELD {
         } Field;
 Field *Site; /* Place holder for the current site simulations */
 
+enum {
+    OUTPUT_TXT,
+    OUTPUT_NCDF,
+    OUTPUT_NTYPES
+};
+
 /* Place holder for a simulation unit */
 typedef struct SIMUNIT {
         Plant *crp;
@@ -409,6 +415,7 @@ typedef struct SIMUNIT {
         int start;
         int end;
         char output[MAX_STRING];
+        int outputType;
         struct SIMUNIT *next;
         } SimUnit; 
 SimUnit ***Grid;
