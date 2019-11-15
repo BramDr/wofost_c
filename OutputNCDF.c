@@ -214,7 +214,7 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
         }
     }
     for (j = 0; j < NLatitude * NLongitude; j++) {
-        data[j] = 0;
+        data[j] = NC_FILL_FLOAT;
     }
     
     pstart[0] = Day;
@@ -528,9 +528,6 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
 //            ERR(retval);
 //        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
 //            ERR(retval);
-        
-        if ((retval = nc_sync(ncid)))
-            ERR(retval);
         
         sampleGrid = sampleGrid->next;
         for(k = 0; k < NLatitude; k++) {
