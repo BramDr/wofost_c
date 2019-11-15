@@ -184,7 +184,7 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
     size_t pstart[3];
     size_t pcount[3];
     
-    // Allocate temporary data
+    /* Allocate temporary data */
     initial = malloc(NLongitude * sizeof(*initial));
     if(initial == NULL){
         fprintf(stderr, "Could not malloc");
@@ -203,7 +203,7 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
         exit(0); 
     }
     
-    // Initialize data
+    /* Initialize data */
     for (j = 0; j < NLongitude; j++) {
         for(k = 0; k < NLatitude; k++) {
             if (Mask[j][k] == 1){
@@ -229,6 +229,14 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
     while (sampleGrid) {
         if (sampleGrid->outputType != OUTPUT_NCDF) {
             continue;
+        }
+        
+        /* Reopen meteo file once-a-year to flush memory*/
+        if ((Day % 365) == 0 && Day != NTime - 1) {
+            if ((retval = nc_close(output[sampleGrid->file])))
+                ERR(retval);
+            if ((retval = nc_open(sampleGrid->output, NC_WRITE, &output[sampleGrid->file])))
+                ERR(retval);
         }
         
         ncid = output[sampleGrid->file];
@@ -329,17 +337,17 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
         if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
             ERR(retval);
 
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Rain[j][k];
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "Rain", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Rain[j][k];
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "Rain", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
 
         for(k = 0; k < NLatitude; k++) {
             for (j = 0; j < NLongitude; j++) {
@@ -377,153 +385,154 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
         if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
             ERR(retval);
 
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->crp->N_st.Indx;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "NNI", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->crp->P_st.Indx;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "PNI", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->crp->K_st.Indx;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "KNI", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->ste->st_N_tot;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "SOILN", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->ste->st_P_tot;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "SOILP", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->ste->st_K_tot;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "SOILK", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->crp->N_st.Uptake;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "NUPT", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->crp->P_st.Uptake;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "PUPT", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->crp->K_st.Uptake;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "KUPT", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->crp->N_rt.Demand_lv + Grid[j][k]->crp->N_rt.Demand_st + Grid[j][k]->crp->N_rt.Demand_ro;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "NDEM", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->crp->P_rt.Demand_lv + Grid[j][k]->crp->P_rt.Demand_st + Grid[j][k]->crp->P_rt.Demand_ro;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "PDEM", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
-
-        for(k = 0; k < NLatitude; k++) {
-            for (j = 0; j < NLongitude; j++) {
-                if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->crp->K_rt.Demand_lv + Grid[j][k]->crp->K_rt.Demand_st + Grid[j][k]->crp->K_rt.Demand_ro;
-                }
-            }
-        }
-        if ((retval = nc_inq_varid(ncid, "KDEM", &varid)))
-            ERR(retval);
-        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
-            ERR(retval);
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->crp->N_st.Indx;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "NNI", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->crp->P_st.Indx;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "PNI", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->crp->K_st.Indx;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "KNI", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->ste->st_N_tot;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "SOILN", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->ste->st_P_tot;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "SOILP", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->ste->st_K_tot;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "SOILK", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->crp->N_st.Uptake;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "NUPT", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->crp->P_st.Uptake;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "PUPT", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->crp->K_st.Uptake;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "KUPT", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->crp->N_rt.Demand_lv + Grid[j][k]->crp->N_rt.Demand_st + Grid[j][k]->crp->N_rt.Demand_ro;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "NDEM", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->crp->P_rt.Demand_lv + Grid[j][k]->crp->P_rt.Demand_st + Grid[j][k]->crp->P_rt.Demand_ro;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "PDEM", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
+//
+//        for(k = 0; k < NLatitude; k++) {
+//            for (j = 0; j < NLongitude; j++) {
+//                if (Mask[j][k] == 1) {
+//                data[k * NLongitude + j] = Grid[j][k]->crp->K_rt.Demand_lv + Grid[j][k]->crp->K_rt.Demand_st + Grid[j][k]->crp->K_rt.Demand_ro;
+//                }
+//            }
+//        }
+//        if ((retval = nc_inq_varid(ncid, "KDEM", &varid)))
+//            ERR(retval);
+//        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+//            ERR(retval);
         
         if ((retval = nc_sync(ncid)))
             ERR(retval);
         
+        sampleGrid = sampleGrid->next;
         for(k = 0; k < NLatitude; k++) {
             for (j = 0; j < NLongitude; j++) {
                 if (Grid[j][k] != NULL){
@@ -531,9 +540,9 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
                 }
             }
         }
-        sampleGrid = sampleGrid->next;
     }
     
+    /* Go back to the beginning of the list */
     sampleGrid = sampleInitial;
     for(k = 0; k < NLatitude; k++) {
         for (j = 0; j < NLongitude; j++) {

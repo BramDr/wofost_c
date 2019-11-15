@@ -81,10 +81,6 @@ int main(int argc, char **argv)
             if((retval = nc_create(name, NC_NETCDF4, &outputNCDF[sampleGrid->file])))
                 ERR(retval);
             headerNCDF(outputNCDF[sampleGrid->file]);
-            if((retval = nc_close(outputNCDF[sampleGrid->file])))
-                ERR(retval);
-            if((retval = nc_open(name, NC_WRITE, &outputNCDF[sampleGrid->file])))
-                ERR(retval);
         }
         
         sampleGrid = sampleGrid->next;
@@ -259,7 +255,9 @@ int main(int argc, char **argv)
         for(Lat = 0; Lat < NLatitude; Lat++) {
             Clean(Grid[Lon][Lat]);
         }
+        free(Grid[Lon]);
     }
+    free(Grid);
 
     CleanDomain();
 
