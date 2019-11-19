@@ -353,6 +353,43 @@ void Clean(SimUnit *Grid)
     Grid = initial = NULL;
 }
 
+void CleanHarvest(SimUnit *Grid)
+{
+    
+    SimUnit *initial;
+    Green *LeaveProperties;
+    
+    /* Store pointer of the beginning of the list */
+    initial = Grid;
+ 
+    /* For each node the Afgen tables and the Leaves have to be freed before */
+    /* the individual nodes will be freed.                                   */
+    while (Grid)
+    {
+        /* Free the leaves of this node. Loop until the last element in the */
+        /* list and free each node */
+        while (Grid->crp->LeaveProperties)
+        {
+            LeaveProperties = Grid->crp->LeaveProperties;
+            Grid->crp->LeaveProperties = Grid->crp->LeaveProperties->next; 
+
+            free(LeaveProperties);
+            LeaveProperties = NULL;
+        }
+
+        /* Free the last node */
+        free(Grid->crp->LeaveProperties);
+        
+        /* Set the adddress to NULL*/
+        Grid->crp->LeaveProperties = NULL;
+        
+        /* Go to the next node */
+        Grid = Grid->next;
+    }
+    
+    Grid = initial;
+}
+
 void CleanMeteo(Weather *Meteo)
 {
     int i;

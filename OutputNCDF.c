@@ -231,15 +231,12 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
             continue;
         }
         
-        /* Reopen meteo file once-a-year to flush memory*/
-        if ((Day % 365) == 0 && Day != NTime - 1) {
-            if ((retval = nc_close(output[sampleGrid->file])))
-                ERR(retval);
-            if ((retval = nc_open(sampleGrid->output, NC_WRITE, &output[sampleGrid->file])))
-                ERR(retval);
-        }
-        
         ncid = output[sampleGrid->file];
+        
+        /* Reopen meteo file once-a-year to flush memory*/
+        if ((Day % 365) == 0 && Day != 0) {
+            nc_sync(ncid);
+        }
         
         for(k = 0; k < NLatitude; k++) {
             for (j = 0; j < NLongitude; j++) {

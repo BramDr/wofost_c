@@ -35,6 +35,7 @@ extern int Astro();
 extern void CalcPenman();
 extern void CalcPenmanMonteith();
 extern void Clean();
+extern void CleanHarvest();
 extern void CleanMeteo();
 extern void CleanDomain();
 

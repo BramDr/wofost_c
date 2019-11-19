@@ -201,6 +201,7 @@ int main(int argc, char **argv)
                             }
                             else
                             {
+                                CleanHarvest(Grid[Lon][Lat]);
                                 //printf("%7d %7d\n", MeteoYear[Day], Crop->GrowthDay);
                                 Emergence = 0;
                                 Crop->TSumEmergence = 0;
