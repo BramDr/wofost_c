@@ -417,6 +417,7 @@ typedef struct SIMUNIT {
         char output[MAX_STRING];
         int outputType;
         struct SIMUNIT *next;
+        int growing;
         } SimUnit; 
 SimUnit ***Grid;
 

@@ -20,7 +20,7 @@ extern float limit(float a, float b, float c);
 extern float notnul(float x);
 extern float insw(float x1, float x2, float x3);
 extern int leap_year(int year);
-extern void datestring_doy(int doy, char *dateString, size_t length);
+extern void datestring_doy(int doy, int year, char *dateString, size_t length);
 extern void RatesToZero();
 extern void OutputTXT();
 extern void headerTXT();

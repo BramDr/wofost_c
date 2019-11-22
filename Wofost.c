@@ -146,7 +146,7 @@ int main(int argc, char **argv)
                         }
 
                         /* Determine if the sowing already has occurred */
-                        IfSowing(Grid[Lon][Lat]->start);
+                        IfSowing(Grid[Lon][Lat]->start, MeteoYear[Day]);
 
                         /* If sowing has occurred than determine the emergence */
                         if (Crop->Sowing >= 1 && Crop->Emergence == 0)
@@ -157,6 +157,7 @@ int main(int argc, char **argv)
                                 InitializeCrop();
                                 InitializeWatBal();
                                 InitializeNutrients(); 
+                                Grid[Lon][Lat]->growing = 1;
                             }  
                         }
 
@@ -204,9 +205,15 @@ int main(int argc, char **argv)
                                 CleanHarvest(Grid[Lon][Lat]);
                                 //printf("%7d %7d\n", MeteoYear[Day], Crop->GrowthDay);
                                 Emergence = 0;
+                                Grid[Lon][Lat]->growing = 0;
                                 Crop->TSumEmergence = 0;
                                 Crop->Emergence = 0;
                                 Crop->Sowing    = 0;
+                                Crop->st.LAI = 0;
+                                WatBal->WaterStress = 0;
+                                WatBal->rt.EvapSoil = 0;
+                                WatBal->rt.EvapWater = 0;
+                                WatBal->rt.Transpiration = 0;
                             }
                         }
 

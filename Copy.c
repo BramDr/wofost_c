@@ -443,6 +443,7 @@ CopySim(SimUnit *from, SimUnit *to)
     to->start = from->start;
     to->end = from->end;
     to->outputType = from->outputType;
+    to->growing = from->growing;
     
     memset(to->output, '\0', MAX_STRING);
     strncpy(to->output, from->output, strlen(from->output));

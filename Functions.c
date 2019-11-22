@@ -31,16 +31,18 @@ int leap_year(int year)
         return 365;
 }
 
-void datestring_doy(int doy, char *dateString, size_t length)
+void datestring_doy(int doy, int year, char *dateString, size_t length)
 {
-    const int monthdays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int monthdays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     
     int i;
     int month, day;
     
+    monthdays[1] += leap_year(year) - 365;
+    
     memset(dateString,'\0', length);
     for(i = 0; i < 12; i++) {
-        if (doy < monthdays[i]) {
+        if (doy <= monthdays[i]) {
             month = i + 1;
             day = doy;
             snprintf(dateString, length, "%d-%d", month, day);

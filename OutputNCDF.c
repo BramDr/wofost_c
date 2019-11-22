@@ -49,6 +49,10 @@ void headerNCDF(int ncid)
         ERR(retval);
     
     // Add output variables
+    if ((retval = nc_def_var(ncid, "GROW", NC_FLOAT, 3, &dimids[0], &varid)))
+        ERR(retval);
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
+        ERR(retval);
     if ((retval = nc_def_var(ncid, "DVS", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
     if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
@@ -73,6 +77,7 @@ void headerNCDF(int ncid)
         ERR(retval);
     if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
+    
     if ((retval = nc_def_var(ncid, "WSTR", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
     if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
@@ -97,6 +102,15 @@ void headerNCDF(int ncid)
         ERR(retval);
     if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
         ERR(retval);
+    if ((retval = nc_def_var(ncid, "SEVAP", NC_FLOAT, 3, &dimids[0], &varid)))
+        ERR(retval);
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
+        ERR(retval);
+    if ((retval = nc_def_var(ncid, "TRANS", NC_FLOAT, 3, &dimids[0], &varid)))
+        ERR(retval);
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
+        ERR(retval);
+    
     if ((retval = nc_def_var(ncid, "NNI", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
     if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
@@ -241,6 +255,18 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
         for(k = 0; k < NLatitude; k++) {
             for (j = 0; j < NLongitude; j++) {
                 if (Mask[j][k] == 1) {
+                    data[k * NLongitude + j] = (float)Grid[j][k]->growing;
+                }
+            }
+        }
+        if ((retval = nc_inq_varid(ncid, "GROW", &varid)))
+            ERR(retval);
+        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+            ERR(retval);
+        
+        for(k = 0; k < NLatitude; k++) {
+            for (j = 0; j < NLongitude; j++) {
+                if (Mask[j][k] == 1) {
                     data[k * NLongitude + j] = Grid[j][k]->crp->st.Development;
                 }
             }
@@ -349,7 +375,7 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
         for(k = 0; k < NLatitude; k++) {
             for (j = 0; j < NLongitude; j++) {
                 if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->soil->st.Infiltration;
+                data[k * NLongitude + j] = Grid[j][k]->soil->rt.Infiltration;
                 }
             }
         }
@@ -361,7 +387,7 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
         for(k = 0; k < NLatitude; k++) {
             for (j = 0; j < NLongitude; j++) {
                 if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->soil->st.Runoff;
+                data[k * NLongitude + j] = Grid[j][k]->soil->rt.Runoff;
                 }
             }
         }
@@ -373,11 +399,35 @@ void OutputNCDF(int *output, SimUnit* sampleGrid)
         for(k = 0; k < NLatitude; k++) {
             for (j = 0; j < NLongitude; j++) {
                 if (Mask[j][k] == 1) {
-                data[k * NLongitude + j] = Grid[j][k]->soil->st.Loss;
+                data[k * NLongitude + j] = Grid[j][k]->soil->rt.Loss;
                 }
             }
         }
         if ((retval = nc_inq_varid(ncid, "LOSS", &varid)))
+            ERR(retval);
+        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+            ERR(retval);
+
+        for(k = 0; k < NLatitude; k++) {
+            for (j = 0; j < NLongitude; j++) {
+                if (Mask[j][k] == 1) {
+                data[k * NLongitude + j] = Grid[j][k]->soil->rt.EvapSoil;
+                }
+            }
+        }
+        if ((retval = nc_inq_varid(ncid, "SEVAP", &varid)))
+            ERR(retval);
+        if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
+            ERR(retval);
+
+        for(k = 0; k < NLatitude; k++) {
+            for (j = 0; j < NLongitude; j++) {
+                if (Mask[j][k] == 1) {
+                data[k * NLongitude + j] = Grid[j][k]->soil->rt.Transpiration;
+                }
+            }
+        }
+        if ((retval = nc_inq_varid(ncid, "TRANS", &varid)))
             ERR(retval);
         if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], data)))
             ERR(retval);

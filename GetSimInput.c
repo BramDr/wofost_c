@@ -140,6 +140,7 @@ int GetSimInput(char *list, SimUnit **sampleGrid)
         tmpGrid->emergence = Emergence;      // Start the simulations at emergence (1) or at sowing (0)                
         tmpGrid->crp->Sowing = 0;
         tmpGrid->crp->Emergence = 0;         // Crop emergence has not yet occurred
+        tmpGrid->growing = 0;
         tmpGrid->next = NULL;
 
         /* Loop lat/lon and copy */
