@@ -37,6 +37,7 @@ int Astro()
     SinLD = sin(RAD*Latitude[Lat])*sin(Declination);
     CosLD = cos(RAD*Latitude[Lat])*cos(Declination);
     AOB   = SinLD/CosLD;
+    AOB   = max(-1, min(1, AOB));
     
    /* Astronomical day length */
     Daylength = max(0,min(24.,12.0*(1.+2.*asin(AOB)/PI)));
