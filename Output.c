@@ -4,14 +4,14 @@
 
 void headerTXT(FILE *fp)
 {
-    fprintf(fp,"Lat\t\t\t\tLon\t\t\tYear\t\tDay\t\tDVS\t\tWLV\t\tWST\t\tWSO\t\tWRT\t\tLAI\t\t\tWSTR\tSOILM\tRain\tINF\t\tRUNF\tLOSS\t"
-            "\tNNI\t\tPNI\t\tKNI\t\tSOILN\tSOILP\tSOILK\tNUPT\tPUPT\tKUPT\tNDEM\tPDEM\tKDEM\n");
+    fprintf(fp,"Lat\t\t\t\tLon\t\t\tYear\t\tDay\t\tDVS\t\tWLV\t\tWST\t\tWSO\t\tWRT\t\tLAI\t\t\tWSTR\tSOILM\tINF\t\tRUNF\tLOSS\t\t"
+            "SOILN\tSOILP\tSOILK\tNUPT\tPUPT\tKUPT\tNDEM\tPDEM\tKDEM\n");
 }
 
 void OutputTXT(FILE *fp)
 {
-    fprintf(fp,"%7.2f\t%7.2f\t\t%4d\t\t%3d\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t"
-            "\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n",
+    fprintf(fp,"%7.2f\t%7.2f\t\t%4d\t\t%3d\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t"
+            "\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n",
         Latitude[Lat],
         Longitude[Lon],
         MeteoYear[Day],
@@ -21,24 +21,20 @@ void OutputTXT(FILE *fp)
         Crop->st.stems,
         Crop->st.storage,
         Crop->st.roots,
-        Crop->st.LAI,
-        WatBal->WaterStress,
+        Crop->LAIAvg / Crop->GrowthDay,
+        WatBal->WaterStressAvg / Crop->GrowthDay,
         WatBal->st.Moisture,
-        Rain[Lon][Lat],
-        WatBal->rt.Infiltration,
-        WatBal->rt.Runoff,
-        WatBal->rt.Loss,
-        Crop->N_st.Indx,
-        Crop->P_st.Indx,
-        Crop->K_st.Indx,
+        WatBal->st.Infiltration,
+        WatBal->st.Runoff,
+        WatBal->st.Loss,
         Site->st_N_tot,
         Site->st_P_tot,
         Site->st_K_tot,
-        Crop->N_rt.Uptake,
-        Crop->P_rt.Uptake,
-        Crop->K_rt.Uptake,
-        Crop->N_rt.Demand_lv + Crop->N_rt.Demand_st + Crop->N_rt.Demand_ro,
-        Crop->P_rt.Demand_lv + Crop->P_rt.Demand_st + Crop->P_rt.Demand_ro,
-        Crop->K_rt.Demand_lv + Crop->K_rt.Demand_st + Crop->K_rt.Demand_ro);
+        Crop->N_st.Uptake,
+        Crop->P_st.Uptake,
+        Crop->K_st.Uptake,
+        Crop->N_st.Demand,
+        Crop->P_st.Demand,
+        Crop->K_st.Demand);
 }
 

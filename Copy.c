@@ -203,6 +203,7 @@ CopyNutrientRates(nutrient_rates *from, nutrient_rates *to)
     to->stems = from->stems;
     to->leaves = from->leaves;
     to->storage = from->storage;
+    to->Demand = from->Demand;
     to->Demand_lv = from->Demand_lv;
     to->Demand_st = from->Demand_st;
     to->Demand_ro = from->Demand_ro;
@@ -227,6 +228,11 @@ CopyNutrientStates(nutrient_states *from, nutrient_states *to)
     to->stems = from->stems;
     to->leaves = from->leaves;
     to->storage = from->storage;
+    to->Demand = from->Demand;
+    to->Demand_lv = from->Demand_lv;
+    to->Demand_st = from->Demand_st;
+    to->Demand_ro = from->Demand_ro;
+    to->Demand_so = from->Demand_so;
     to->Max_lv = from->Max_lv;
     to->Max_st = from->Max_st;
     to->Max_ro = from->Max_ro;
@@ -354,6 +360,7 @@ CopyPlant(Plant *from, Plant *to)
     to->fac_ro = from->fac_ro;
     to->fac_so = from->fac_so;
     to->fac_st = from->fac_st;
+    to->LAIAvg = from->LAIAvg;
     
     CopyParameters(&from->prm, &to->prm);
     CopyGrowthRates(&from->rt, &to->rt);
@@ -407,6 +414,7 @@ CopySoil(Soil *from, Soil *to)
     to->InfPreviousDay = from->InfPreviousDay;
     to->SoilMaxRootingDepth = from->SoilMaxRootingDepth;
     to->WaterStress = from->WaterStress;
+    to->WaterStressAvg = from->WaterStressAvg;
     
     CopyStates(&from->st, &to->st);
     CopyRates(&from->rt, &to->rt);

@@ -77,6 +77,7 @@ void InitializeCrop()
     Crop->st.LAI = LAIEmergence + Crop->st.stems * 
            Afgen(Crop->prm.SpecificStemArea, &(Crop->st.Development)) +
            Crop->st.storage*Crop->prm.SpecificPodArea;
+    Crop->LAIAvg = 0.;
     
     /* Initialize the leaves */
     Crop->LeaveProperties         = malloc(sizeof (Green));

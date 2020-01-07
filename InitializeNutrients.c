@@ -58,6 +58,25 @@ void InitializeNutrients()
     Crop->K_st.death_lv = 0.;
     Crop->K_st.death_st = 0.;
     Crop->K_st.death_ro = 0.;
+    
+    /* Set the initial demand to zero*/
+    Crop->N_st.Demand = 0.;
+    Crop->N_st.Demand_lv = 0.;
+    Crop->N_st.Demand_st = 0.;
+    Crop->N_st.Demand_so = 0.;
+    Crop->N_st.Demand_ro = 0.;
+    
+    Crop->P_st.Demand = 0.;
+    Crop->P_st.Demand_lv = 0.;
+    Crop->P_st.Demand_st = 0.;
+    Crop->P_st.Demand_so = 0.;
+    Crop->P_st.Demand_ro = 0.;
+    
+    Crop->K_st.Demand = 0.;
+    Crop->K_st.Demand_lv = 0.;
+    Crop->K_st.Demand_st = 0.;
+    Crop->K_st.Demand_so = 0.;
+    Crop->K_st.Demand_ro = 0.;
        
     /* Set the initial uptake to zero*/
     Crop->N_st.Uptake    = 0.;

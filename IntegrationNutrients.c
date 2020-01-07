@@ -20,6 +20,11 @@ void IntegrationNutrients()
     Site->st_P_mins  = max(0., Site->st_P_mins - Site->rt_P_mins);
     Site->st_K_mins  = max(0., Site->st_K_mins - Site->rt_K_mins);
         
+    /* Demand */
+    Crop->N_st.Demand += Crop->N_rt.Demand;
+    Crop->P_st.Demand += Crop->N_rt.Demand;
+    Crop->K_st.Demand += Crop->N_rt.Demand;
+    
     /* Uptake */
     Crop->N_st.Uptake += Crop->N_rt.Uptake;
     Crop->P_st.Uptake += Crop->P_rt.Uptake;

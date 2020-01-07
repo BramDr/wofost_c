@@ -221,6 +221,7 @@ typedef struct NUTRIENT_RATES {
         float stems;
         float leaves;
         float storage;
+        float Demand;
         float Demand_lv;
         float Demand_st;
         float Demand_ro;
@@ -245,6 +246,11 @@ typedef struct NUTRIENT_STATES {
         float stems;
         float leaves;
         float storage;
+        float Demand;
+        float Demand_lv;
+        float Demand_st;
+        float Demand_ro;
+        float Demand_so;
         float Max_lv;
         float Max_st;
         float Max_ro;
@@ -324,6 +330,7 @@ typedef struct PLANT {
         float fac_lv;
         float fac_st;
         float fac_so;
+        float LAIAvg;
         
         Parameters prm;
         
@@ -349,6 +356,7 @@ typedef struct SOIL {
         float DaysSinceLastRain;
         float SoilMaxRootingDepth;
         float WaterStress;
+        float WaterStressAvg;
         float InfPreviousDay;
         
         /* Tables for Soil */
@@ -449,7 +457,7 @@ int Station, Year;
 int MeteoYear[METEO_LENGTH];
 int MeteoDay[METEO_LENGTH];
 float CO2;
-size_t NLongitude, NLatitude, NTime;
+size_t NLongitude, NLatitude, NTime, NYears;
 double Longitude[DOMAIN_LENGTH], Latitude[DOMAIN_LENGTH];
 int **Mask;
 float **Altitude;

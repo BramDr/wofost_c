@@ -64,8 +64,10 @@ void GetMeteoInput(char *meteolist)
         }
         
         NTime = 0;
+        NYears = 0;
         for (i = Meteo->StartYear; i <= Meteo->EndYear; i++) {
             NTime += leap_year(i);
+            NYears++;
         }
         
         for (i = 0; i < WEATHER_NTYPES; i++) {

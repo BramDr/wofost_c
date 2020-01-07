@@ -195,25 +195,26 @@ int main(int argc, char **argv)
                                 /* Update the number of days that the crop has grown*/
                                 Crop->GrowthDay++;
                                 
+                                /* Update averages */
+                                WatBal->WaterStressAvg += WatBal->WaterStress;
+                                Crop->LAIAvg += Crop->st.LAI;
+                            }
+                            else
+                            {
                                 /* Write to the output files */
                                 if (Grid[Lon][Lat]->outputType == OUTPUT_TXT) {
                                     OutputTXT(outputTXT[Grid[Lon][Lat]->file]);
                                 }
-                            }
-                            else
-                            {
+                                else if (Grid[Lon][Lat]->outputType == OUTPUT_NCDF) {
+                                    OutputNCDF(outputNCDF[Grid[Lon][Lat]->file]);
+                                }
+                                
                                 CleanHarvest(Grid[Lon][Lat]);
-                                //printf("%7d %7d\n", MeteoYear[Day], Crop->GrowthDay);
                                 Emergence = 0;
                                 Grid[Lon][Lat]->growing = 0;
                                 Crop->TSumEmergence = 0;
                                 Crop->Emergence = 0;
                                 Crop->Sowing    = 0;
-                                Crop->st.LAI = 0;
-                                WatBal->WaterStress = 0;
-                                WatBal->rt.EvapSoil = 0;
-                                WatBal->rt.EvapWater = 0;
-                                WatBal->rt.Transpiration = 0;
                             }
                         }
 
@@ -230,8 +231,21 @@ int main(int argc, char **argv)
                 }
             }
             
-            /* Write to the output files */
-            OutputNCDF(outputNCDF, sampleGrid);
+            /* Sync meteo file once-a-year to flush memory*/
+            if(Day > 0 && MeteoYear[Day] != MeteoYear[Day - 1]) {
+                /* Open the output files */
+                initial = sampleGrid;
+                while (sampleGrid)
+                {
+                    if (sampleGrid->outputType == OUTPUT_NCDF) {
+                        if((retval = nc_sync(outputNCDF[sampleGrid->file])))
+                            ERR(retval);
+                    }
+                    sampleGrid = sampleGrid->next;
+                }
+                /* Go back to the beginning of the list */
+                sampleGrid = initial;
+            }
         }
         
         head = Meteo;
@@ -240,10 +254,7 @@ int main(int argc, char **argv)
         free(head);
     }
     
-    /* Return to the beginning of the list */
-    sampleGrid = initial;
-    
-    /* Close the output files and free the allocated memory */
+    /* Close the output files */
     while(sampleGrid)
     {
         if (sampleGrid->outputType == OUTPUT_TXT) {
@@ -254,11 +265,12 @@ int main(int argc, char **argv)
         }
         sampleGrid = sampleGrid->next;
     }
-    free(outputTXT);
-    free(outputNCDF);
-
     /* Go back to the beginning of the list */
     sampleGrid = initial;
+    
+    /* Free the allocated memory */
+    free(outputTXT);
+    free(outputNCDF);
     for (Lon = 0; Lon < NLongitude; Lon++) {
         for(Lat = 0; Lat < NLatitude; Lat++) {
             Clean(Grid[Lon][Lat]);
