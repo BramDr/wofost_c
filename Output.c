@@ -4,13 +4,13 @@
 
 void headerTXT(FILE *fp)
 {
-    fprintf(fp,"Lat\t\t\t\tLon\t\t\tYear\t\tDay\t\tDVS\t\tWLV\t\tWST\t\tWSO\t\tWRT\t\tLAI\t\t\tWSTR\tSOILM\tINF\t\tRUNF\tLOSS\t\t"
+    fprintf(fp,"Lat\t\t\t\tLon\t\t\tYear\t\tDay\t\tDVS\t\tWLV\t\tWST\t\tWSO\t\tWRT\t\tLAI\t\t\tWSTR\tRain\tSOILM\tINF\t\tRUNF\tLOSS\t\t"
             "SOILN\tSOILP\tSOILK\tNUPT\tPUPT\tKUPT\tNDEM\tPDEM\tKDEM\n");
 }
 
 void OutputTXT(FILE *fp)
 {
-    fprintf(fp,"%7.2f\t%7.2f\t\t%4d\t\t%3d\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t"
+    fprintf(fp,"%7.2f\t%7.2f\t\t%4d\t\t%3d\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t"
             "\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n",
         Latitude[Lat],
         Longitude[Lon],
@@ -23,6 +23,7 @@ void OutputTXT(FILE *fp)
         Crop->st.roots,
         Crop->LAIAvg / Crop->GrowthDay,
         WatBal->WaterStressAvg / Crop->GrowthDay,
+        WatBal->st.Rain,
         WatBal->st.Moisture,
         WatBal->st.Infiltration,
         WatBal->st.Runoff,

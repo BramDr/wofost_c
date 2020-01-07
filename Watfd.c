@@ -60,6 +60,17 @@ void InitializeWatBal()
     KDiffuse = Afgen(Crop->prm.KDiffuseTb, &(Crop->st.Development));
     WatBal->rt.EvapSoil = max(0., Penman.ES0 * exp(-0.75 * KDiffuse * Crop->st.LAI));
    
+    /* Set the initial states to zero*/
+    WatBal->st.EvapSoil = 0.;
+    WatBal->st.EvapWater = 0.;
+    WatBal->st.Infiltration = 0.;
+    WatBal->st.Irrigation = 0.;
+    WatBal->st.Loss = 0.;
+    WatBal->st.Percolation = 0.;
+    WatBal->st.Rain = 0.;
+    WatBal->st.Runoff = 0.;
+    WatBal->st.Transpiration = 0.;
+    WatBal->st.WaterRootExt = 0.;
 }
 
 /*---------------------------------------------------*/
