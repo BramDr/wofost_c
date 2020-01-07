@@ -181,9 +181,6 @@ int main(int argc, char **argv)
                                 RateCalcultionNutrients();
                                 RateCalculationCrop();
 
-                                /* Write to the output files */
-                                //Output(output[Grid->file]);   
-
                                 /* Calculate LAI */
                                 Crop->st.LAI = LeaveAreaIndex();             
 
