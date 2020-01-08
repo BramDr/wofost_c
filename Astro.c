@@ -23,6 +23,7 @@ int Astro()
     float Declination;
     float SolarConstant;
     float AOB;
+    float AOB2;
     float DSinB;
     float FractionDiffuseRad;
     
@@ -43,7 +44,9 @@ int Astro()
     Daylength = max(0,min(24.,12.0*(1.+2.*asin(AOB)/PI)));
     
     /* Photoactive day length */
-    PARDaylength = max(0,min(24.,12.0*(1.+2.*asin((-sin(ANGLE*RAD)+SinLD)/CosLD)/PI)));
+    AOB2   = (-sin(ANGLE*RAD)+SinLD)/CosLD;
+    AOB2   = max(-1, min(1, AOB2));
+    PARDaylength = max(0,min(24.,12.0*(1.+2.*asin(AOB2)/PI)));
     
     /* Integrals of sine of solar height */
     if (AOB <= 1.0)
