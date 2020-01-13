@@ -159,11 +159,14 @@ int main(int argc, char **argv)
                                 InitializeNutrients(); 
                                 Grid[Lon][Lat]->growing = 1;
                             }  
+        
+                            /* Update the number of days that the crop was cultivated */
+                            Crop->CultivateDay++;
                         }
 
                         if (Crop->Sowing >= 1 && Crop->Emergence == 1)
                         {   
-                            if (Crop->st.Development <= (Crop->prm.DevelopStageHarvest) && Crop->GrowthDay < CycleLength) 
+                            if (Crop->st.Development <= (Crop->prm.DevelopStageHarvest) && Crop->CultivateDay < CycleLength) 
                             {
                                 Astro();
                                 CalcPenman();
@@ -190,6 +193,7 @@ int main(int argc, char **argv)
                                 IntegrationNutrients();
 
                                 /* Update the number of days that the crop has grown*/
+                                Crop->CultivateDay++;
                                 Crop->GrowthDay++;
                                 
                                 /* Update averages */
@@ -208,6 +212,7 @@ int main(int argc, char **argv)
                                 
                                 CleanHarvest(Grid[Lon][Lat]);
                                 Emergence = 0;
+                                Crop->CultivateDay = 0;
                                 Grid[Lon][Lat]->growing = 0;
                                 Crop->TSumEmergence = 0;
                                 Crop->Emergence = 0;
