@@ -413,6 +413,12 @@ enum {
     OUTPUT_NTYPES
 };
 
+enum {
+    OUTPUT_DAILY,
+    OUTPUT_SEASONALLY,
+    OUTPUT_NFREQS
+};
+
 /* Place holder for a simulation unit */
 typedef struct SIMUNIT {
         Plant *crp;
@@ -425,6 +431,7 @@ typedef struct SIMUNIT {
         int end;
         char output[MAX_STRING];
         int outputType;
+        int outputFreq;
         struct SIMUNIT *next;
         int growing;
         } SimUnit; 

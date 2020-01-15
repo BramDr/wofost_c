@@ -136,6 +136,8 @@ int GetSimInput(char *list, SimUnit **sampleGrid)
             exit(0);
         }
         
+        tmpGrid->outputFreq = OUTPUT_SEASONALLY; // Currently not used
+        
         tmpGrid->file  = count++;            // number of elements in Grid carousel
         tmpGrid->emergence = Emergence;      // Start the simulations at emergence (1) or at sowing (0)                
         tmpGrid->crp->Sowing = 0;

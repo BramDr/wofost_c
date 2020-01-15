@@ -452,6 +452,7 @@ CopySim(SimUnit *from, SimUnit *to)
     to->start = from->start;
     to->end = from->end;
     to->outputType = from->outputType;
+    to->outputFreq = from->outputFreq;
     to->growing = from->growing;
     
     memset(to->output, '\0', MAX_STRING);

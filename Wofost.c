@@ -80,7 +80,7 @@ int main(int argc, char **argv)
         } else if (sampleGrid->outputType == OUTPUT_NCDF) {
             if((retval = nc_create(name, NC_NETCDF4, &outputNCDF[sampleGrid->file])))
                 ERR(retval);
-            headerNCDF(outputNCDF[sampleGrid->file]);
+            headerNCDF(outputNCDF[sampleGrid->file], sampleGrid->outputFreq);
         }
         
         sampleGrid = sampleGrid->next;
@@ -199,15 +199,27 @@ int main(int argc, char **argv)
                                 /* Update averages */
                                 WatBal->WaterStressAvg += WatBal->WaterStress;
                                 Crop->LAIAvg += Crop->st.LAI;
+                                
+                                /* Write to the output files */
+                                if (Grid[Lon][Lat]->outputFreq == OUTPUT_DAILY) {
+                                    if (Grid[Lon][Lat]->outputType == OUTPUT_TXT) {
+                                        OutputTXT(outputTXT[Grid[Lon][Lat]->file]);
+                                    }
+                                    else if (Grid[Lon][Lat]->outputType == OUTPUT_NCDF) {
+                                        OutputNCDF(outputNCDF[Grid[Lon][Lat]->file], Grid[Lon][Lat]->outputFreq);
+                                    }
+                                }
                             }
                             else
                             {
                                 /* Write to the output files */
-                                if (Grid[Lon][Lat]->outputType == OUTPUT_TXT) {
-                                    OutputTXT(outputTXT[Grid[Lon][Lat]->file]);
-                                }
-                                else if (Grid[Lon][Lat]->outputType == OUTPUT_NCDF) {
-                                    OutputNCDF(outputNCDF[Grid[Lon][Lat]->file]);
+                                if (Grid[Lon][Lat]->outputFreq == OUTPUT_SEASONALLY) {
+                                    if (Grid[Lon][Lat]->outputType == OUTPUT_TXT) {
+                                        OutputTXT(outputTXT[Grid[Lon][Lat]->file]);
+                                    }
+                                    else if (Grid[Lon][Lat]->outputType == OUTPUT_NCDF) {
+                                        OutputNCDF(outputNCDF[Grid[Lon][Lat]->file], Grid[Lon][Lat]->outputFreq);
+                                    }
                                 }
                                 
                                 CleanHarvest(Grid[Lon][Lat]);
@@ -234,7 +246,7 @@ int main(int argc, char **argv)
             }
             
             /* Sync meteo file once-a-year to flush memory*/
-            if(Day > 0 && MeteoYear[Day] != MeteoYear[Day - 1]) {
+            if(Day == NTime || MeteoYear[Day] != MeteoYear[Day + 1]) {
                 /* Open the output files */
                 initial = sampleGrid;
                 while (sampleGrid)
@@ -257,6 +269,7 @@ int main(int argc, char **argv)
     }
     
     /* Close the output files */
+    initial = sampleGrid;
     while(sampleGrid)
     {
         if (sampleGrid->outputType == OUTPUT_TXT) {

@@ -9,7 +9,7 @@
  * non-zero status. */
 #define ERR(e) {printf("Error: %s\n", nc_strerror(e)); exit(2);}
 
-void headerNCDF(int ncid) 
+void headerNCDF(int ncid, int freq) 
 {
     
     size_t i;
@@ -225,14 +225,6 @@ void headerNCDF(int ncid)
     
     // Fill dimension variables
     pstart[0] = 0;
-    time_vals = malloc(NYears * sizeof(*time_vals));
-    for (i = 0; i < NYears; i++) {
-        if (i == 0) {
-            time_vals[i] = 0;
-        } else {
-            time_vals[i] = time_vals[i - 1] + (double)leap_year(Meteo->StartYear + i);
-        }
-    }
     
     pcount[0] = NLatitude;
     if ((retval = nc_put_vara_double(ncid, lat_varid, pstart, pcount, &Latitude[0])))
@@ -240,14 +232,38 @@ void headerNCDF(int ncid)
     pcount[0] = NLongitude;
     if ((retval = nc_put_vara_double(ncid, lon_varid, pstart, pcount, &Longitude[0])))
         ERR(retval);
-    pcount[0] = NYears;
+    
+    if (freq == OUTPUT_SEASONALLY) {
+        pcount[0] = NYears;
+        time_vals = malloc(NYears * sizeof(*time_vals));
+        for (i = 0; i < NYears; i++) {
+            if (i == 0) {
+                time_vals[i] = 0;
+            } else {
+                time_vals[i] = time_vals[i - 1] + (double)leap_year(Meteo->StartYear + i);
+            }
+        }
+    } else if (freq == OUTPUT_DAILY) {
+        pcount[0] = NTime;
+        time_vals = malloc(NTime * sizeof(*time_vals));
+        for (i = 0; i < NTime; i++) {
+            if (i == 0) {
+                time_vals[i] = 0;
+            } else {
+                time_vals[i] = time_vals[i - 1] + 1;
+            }
+        }
+    } else {
+        fprintf(stderr, "Undefined output frequency %d", freq);
+    }
+    
     if ((retval = nc_put_vara_double(ncid, time_varid, pstart, pcount, time_vals)))
         ERR(retval);
     
     free(time_vals);
 }
 
-void OutputNCDF(int ncid) 
+void OutputNCDF(int ncid, int freq) 
 {
     int retval;
     int varid;
@@ -255,7 +271,14 @@ void OutputNCDF(int ncid)
     size_t pstart[3];
     size_t pcount[3];
     
-    pstart[0] = MeteoYear[Day] - Meteo->StartYear;
+    if (freq == OUTPUT_SEASONALLY) {
+        pstart[0] = MeteoYear[Day] - Meteo->StartYear;
+    } else if (freq == OUTPUT_DAILY) {
+        pstart[0] = Day;
+    } else {
+        fprintf(stderr, "Undefined output frequency %d", freq);
+    }
+    
     pstart[1] = Lat;
     pstart[2] = Lon;
     pcount[0] = 1;
@@ -264,32 +287,32 @@ void OutputNCDF(int ncid)
     
     if ((retval = nc_inq_varid(ncid, "GROW", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_int(ncid, varid, &pstart[0], &pcount[0], &Crop->GrowthDay)))
+    if ((retval = nc_put_vara_int(ncid, varid, &pstart[0], &pcount[0], &(Crop->GrowthDay))))
         ERR(retval);
         
     if ((retval = nc_inq_varid(ncid, "DVS", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->st.Development)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->st.Development))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "WLV", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->st.leaves)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->st.leaves))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "WST", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->st.stems)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->st.stems))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "WSO", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->st.storage)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->st.storage))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "WRT", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->st.roots)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->st.roots))))
         ERR(retval);
 
     data = Crop->LAIAvg / Crop->GrowthDay;
@@ -306,80 +329,80 @@ void OutputNCDF(int ncid)
 
     if ((retval = nc_inq_varid(ncid, "Rain", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &WatBal->st.Rain)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(WatBal->st.Rain))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "SOILM", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &WatBal->st.Moisture)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(WatBal->st.Moisture))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "INF", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &WatBal->st.Infiltration)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(WatBal->st.Infiltration))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "RUNF", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &WatBal->st.Runoff)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(WatBal->st.Runoff))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "LOSS", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &WatBal->st.Loss)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(WatBal->st.Loss))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "SEVAP", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &WatBal->st.EvapSoil)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(WatBal->st.EvapSoil))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "TRANS", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &WatBal->st.Transpiration)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(WatBal->st.Transpiration))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "SOILN", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Site->st_N_tot)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Site->st_N_tot))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "SOILP", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Site->st_P_tot)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Site->st_P_tot))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "SOILK", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Site->st_K_tot)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Site->st_K_tot))))
         ERR(retval);
     
     if ((retval = nc_inq_varid(ncid, "NUPT", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->N_st.Uptake)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->N_st.Uptake))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "PUPT", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->P_st.Uptake)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->P_st.Uptake))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "KUPT", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->K_st.Uptake)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->K_st.Uptake))))
         ERR(retval);
     if ((retval = nc_inq_varid(ncid, "NDEM", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->N_st.Demand)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->N_st.Demand))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "PDEM", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->P_st.Demand)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->P_st.Demand))))
         ERR(retval);
 
     if ((retval = nc_inq_varid(ncid, "KDEM", &varid)))
         ERR(retval);
-    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &Crop->K_st.Demand)))
+    if ((retval = nc_put_vara_float(ncid, varid, &pstart[0], &pcount[0], &(Crop->K_st.Demand))))
         ERR(retval);
 }
