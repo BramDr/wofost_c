@@ -222,7 +222,7 @@ int main(int argc, char **argv)
                                     }
                                 }
                                 
-                                CleanHarvest(Grid[Lon][Lat]);
+                                Harvest(&(Crop->LeaveProperties));
                                 Emergence = 0;
                                 Crop->CultivateDay = 0;
                                 Grid[Lon][Lat]->growing = 0;
