@@ -57,6 +57,12 @@ void headerNCDF(int ncid, int freq)
         ERR(retval);
     if ((retval = nc_put_att_int(ncid, varid, "_FillValue", NC_INT, 1, &missval_int)))
         ERR(retval);
+    if ((retval = nc_def_var(ncid, "CULTIVATE", NC_INT, 3, &dimids[0], &varid)))
+        ERR(retval);
+    if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
+        ERR(retval);
+    if ((retval = nc_put_att_int(ncid, varid, "_FillValue", NC_INT, 1, &missval_int)))
+        ERR(retval);
     if ((retval = nc_def_var(ncid, "DVS", NC_FLOAT, 3, &dimids[0], &varid)))
         ERR(retval);
     if ((retval = nc_def_var_deflate(ncid, varid, 1, 1, 9)))
@@ -288,6 +294,11 @@ void OutputNCDF(int ncid, int freq)
     if ((retval = nc_inq_varid(ncid, "GROW", &varid)))
         ERR(retval);
     if ((retval = nc_put_vara_int(ncid, varid, &pstart[0], &pcount[0], &(Crop->GrowthDay))))
+        ERR(retval);
+    
+    if ((retval = nc_inq_varid(ncid, "CULTIVATE", &varid)))
+        ERR(retval);
+    if ((retval = nc_put_vara_int(ncid, varid, &pstart[0], &pcount[0], &(Crop->CultivateDay))))
         ERR(retval);
         
     if ((retval = nc_inq_varid(ncid, "DVS", &varid)))

@@ -125,10 +125,6 @@ float Correct(float Assimilation)
     {
         number = Crop->GrowthDay;
     }
-    if (Day < 6) 
-    {
-        number = Day;
-    }
     
     Counter = 0;
     while (Counter < number)
