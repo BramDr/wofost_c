@@ -17,8 +17,8 @@ void IfSowing(int start, int year)
     datestring_doy(start, year, &dateString[0], MAX_STRING);
     sscanf(dateString, "%d-%d", &month, &start_day);
       
-    if (current_date.tm_mon == (month - 1) &&
-        current_date.tm_mday == start_day && 
+    if (current_date.tm_mon == 3 &&
+        current_date.tm_mday == 15 && 
         MeteoYear[Day] <= Meteo->EndYear)
     {
         Crop->Sowing = 1;
