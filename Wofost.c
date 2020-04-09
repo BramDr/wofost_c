@@ -144,7 +144,6 @@ int main(int argc, char **argv)
                         } else {
                             CycleLength = leap_year(MeteoYear[Day]) - Grid[Lon][Lat]->start + Grid[Lon][Lat]->end;
                         }
-                        CycleLength = 300;
 
                         /* Determine if the sowing already has occurred */
                         IfSowing(Grid[Lon][Lat]->start, MeteoYear[Day]);
